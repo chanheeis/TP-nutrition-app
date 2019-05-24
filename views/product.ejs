@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Product Page</title>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="public/css/product.css">
+    <link rel="stylesheet" type="text/css" href="../public/css/product.css">
 </head>
 <body>
     <h2>상품 등록 페이지</h2>
-    <form action="/product" method="POST" id="product-insert">
+    <form action="/product/insert" method="POST" id="product-insert" enctype="multipart/form-data">
 
         Name :
         <input type="text" name="p_name" required>
@@ -19,7 +19,12 @@
         
         <textarea name="p_desc" placeholder="설명을 입력하세요." required></textarea>
         <br>
+        <!--Upload-->
         
+        이미지 선택 : 
+        <input id="file_upload" type="file" name="p_image"><br>
+
+        <!--Upload-->
         중량(Weight) :
         <input type="number" name="p_weight" required> lb <br>
         

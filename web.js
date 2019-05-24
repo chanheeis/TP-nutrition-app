@@ -3,6 +3,18 @@ var app=express();
 var path=require('path');
 var bodyParser=require('body-parser');
 var mysql=require('mysql');
+var multer=require('multer');
+
+var storage=multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null,'uploads/')
+    },
+    filename: function(req,file,cb){
+        cb(null,file.originalname);
+    }
+});
+
+var upload=multer({storage:storage});
 
 var conn=mysql.createConnection({
     host:'nodejs-004.cafe24.com',
@@ -96,11 +108,11 @@ app.post('/login',(req,res)=>{
     })
 })
 
-app.get('/product',(req,res)=>{
+app.get('/product/insert',(req,res)=>{
     res.render('product');
 });
 
-app.post('/product',(req,res)=>{
+app.post('/product/insert',upload.single('p_image'),(req,res)=>{
     const p_name=req.body.p_name;
     const p_brand=req.body.p_brand;
     const p_desc=req.body.p_desc;
@@ -121,10 +133,10 @@ app.post('/product',(req,res)=>{
         p_name,p_brand,p_desc,p_weight,p_flavor,p_fat,p_saturated_fat,p_trans_fat,p_cholesterol,p_sodium,p_corbohydrate,p_dietary_fiber,p_sugar,p_protein
     };
 
+    console.log(req.file);
+
     conn.query(query,data,(err,result)=>{
         console.log(result);
-        res.redirect('/product');
+        res.redirect('/product/insert');
     });
-
-    
 })
