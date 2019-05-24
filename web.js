@@ -7,7 +7,7 @@ var multer=require('multer');
 
 var storage=multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,'uploads/')
+        cb(null,'views/public/image/uploads')
     },
     filename: function(req,file,cb){
         cb(null,file.originalname);
@@ -55,7 +55,6 @@ app.post('/join',(req,res)=>{
         m_name,m_password,m_birth,m_sex,m_email,m_id
     };
     
-
     conn.query(query,data,(err,result)=>{
         if(err) throw err;
         
@@ -127,13 +126,18 @@ app.post('/product/insert',upload.single('p_image'),(req,res)=>{
     const p_dietary_fiber=req.body.p_dietary_fiber;
     const p_sugar=req.body.p_sugar;
     const p_protein=req.body.p_protein;
-
+    const p_image=req.file.path;
+    
     const query=`INSERT INTO product SET ?`;
     const data={
-        p_name,p_brand,p_desc,p_weight,p_flavor,p_fat,p_saturated_fat,p_trans_fat,p_cholesterol,p_sodium,p_corbohydrate,p_dietary_fiber,p_sugar,p_protein
+        p_name,p_brand,p_desc,
+        p_weight,p_flavor,p_fat,
+        p_saturated_fat,p_trans_fat,p_cholesterol,
+        p_sodium,p_corbohydrate,p_dietary_fiber,
+        p_sugar,p_protein,p_image
     };
 
-    console.log(req.file);
+    console.log(req.file.path);
 
     conn.query(query,data,(err,result)=>{
         console.log(result);
