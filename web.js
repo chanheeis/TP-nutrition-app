@@ -4,13 +4,16 @@ var path=require('path');
 var bodyParser=require('body-parser');
 var mysql=require('mysql');
 var multer=require('multer');
+var root=require('./root');
 
 var storage=multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,'./views/public/image/uploads')
+        cb(null,`${root}/views/public/image/uploads`)
+        console.log("destination determined!");
     },
     filename: function(req,file,cb){
         cb(null,file.originalname);
+        console.log("name is determined!");
     }
 });
 
@@ -31,6 +34,7 @@ app.use('/public',express.static(__dirname+'/views/public'));
 
 app.listen(8001,()=>{
     console.log("Connected to 3000 PORT!!!");
+    console.log(`This App's Root is ${root}.`);
     conn.connect();    
 })
 
@@ -107,7 +111,7 @@ app.post('/login',(req,res)=>{
     })
 })
 
-app.get('/product/insert',(req,res)=>{
+app.get('/product',(req,res)=>{
     res.render('product');
 });
 
@@ -126,6 +130,9 @@ app.post('/product/insert',upload.single('p_image'),(req,res)=>{
     const p_dietary_fiber=req.body.p_dietary_fiber;
     const p_sugar=req.body.p_sugar;
     const p_protein=req.body.p_protein;
+    const p_div=req.body.p_div;
+
+    //product의 이미지를 file 전송 시스템으로 업로드하는 변수
     const p_image=req.file.path;
     
     const query=`INSERT INTO product SET ?`;
@@ -134,13 +141,11 @@ app.post('/product/insert',upload.single('p_image'),(req,res)=>{
         p_weight,p_flavor,p_fat,
         p_saturated_fat,p_trans_fat,p_cholesterol,
         p_sodium,p_corbohydrate,p_dietary_fiber,
-        p_sugar,p_protein,p_image
+        p_sugar,p_protein,p_image,p_div
     };
-
-    console.log(req.file.path);
 
     conn.query(query,data,(err,result)=>{
         console.log(result);
-        res.redirect('/product/insert');
+        res.redirect('/product');
     });
 })
