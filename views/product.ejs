@@ -5,8 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        #product-insert{
+            margin-left:10px; margin-top:10px;
+            border:2px solid #262626;
+            padding:15px;
+            width:700px;
+            height:600px;
+        }
+
+        #product-insert input{
+            display:inline-block;
+            border:1px solid #262626;
+            border-radius: 10px;
+            border-style:solid;
+            margin-bottom:10px;
+        }
+
+        input[type="submit"]{
+            padding:5px;
+        }
+        
+        h2{
+            margin-left:10px; margin-top:10px;
+        }
+
+        hr{
+            margin-bottom:10px;
+            line-height: 3px;
+        }
+    </style>
 </head>
 <body>
-    Product Page
+    <h2>상품 등록 페이지</h2>
+    <form action="/product" method="POST" id="product-insert">
+        Name :
+        <input type="text" name="p_id">
+        Brand :
+        <input type="text" name="p_brand">
+        
+        
+        <textarea name="p_desc" rows="4" cols="100">설명을 입력하세요.</textarea>
+        <br>
+        
+        중량(Weight) :
+        <input type="number" name="p_weight"> g <br>
+        
+        맛(Flavor) :
+            없음<input type="radio" name="p_flavor" value="없음">
+            딸기맛<input type="radio" name="p_flavor" value="딸기맛">
+            초코맛<input type="radio" name="p_flavor" value="초코맛">
+            바닐라맛<input type="radio" name="p_flavor" value="바닐라맛"><br>
+        
+        칼로리(Calorie) :
+        <input type="number" name="p_calorie"> g
+
+        <hr>
+        지방(Fat) :
+        <input type="number" name="p_fat"> g <br>
+            포화지방(Saturated Fat) : 
+            <input type="number" name="p_saturated_fat"> g <br>
+            트랜스지방(Trans Fat) :
+            <input type="number" name="p_trans_fat"> g <br>
+        <hr>
+
+        콜레스테롤(Cholesterol) :
+        <input type="number" name="p_cholesterol"> mg <br>
+        나트륨(Sodium) :
+        <input type="number" name="p_sodium"> g <br>
+        
+        <hr>
+        총 탄수화물 량(Corbohydrate) :
+        <input type="number" name="p_corbohydrate"> g <br>
+            식이섬유(Dietary Fiber) :
+            <input type="number" name="p_dietary_fiber"> g <br>
+            당류(Sugar) :
+            <input type="number" name="p_sugar"> g <br>
+        <hr>
+
+        단백질(Protein) :
+        <input type="number" name="p_protein"> g <br>
+        
+        <input type="submit">
+    </form>
 </body>
 </html>
