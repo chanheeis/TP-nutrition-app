@@ -99,3 +99,32 @@ app.post('/login',(req,res)=>{
 app.get('/product',(req,res)=>{
     res.render('product');
 });
+
+app.post('/product',(req,res)=>{
+    const p_name=req.body.p_name;
+    const p_brand=req.body.p_brand;
+    const p_desc=req.body.p_desc;
+    const p_weight=req.body.p_weight;
+    const p_flavor=req.body.p_flavor;
+    const p_fat=req.body.p_fat;
+    const p_saturated_fat=req.body.p_saturated_fat;
+    const p_trans_fat=req.body.p_trans_fat;
+    const p_cholesterol=req.body.p_cholesterol;
+    const p_sodium=req.body.p_sodium;
+    const p_corbohydrate=req.body.p_corbohydrate;
+    const p_dietary_fiber=req.body.p_dietary_fiber;
+    const p_sugar=req.body.p_sugar;
+    const p_protein=req.body.p_protein;
+
+    const query=`INSERT INTO product SET ?`;
+    const data={
+        p_name,p_brand,p_desc,p_weight,p_flavor,p_fat,p_saturated_fat,p_trans_fat,p_cholesterol,p_sodium,p_corbohydrate,p_dietary_fiber,p_sugar,p_protein
+    };
+
+    conn.query(query,data,(err,result)=>{
+        console.log(result);
+        res.redirect('/product');
+    });
+
+    
+})
