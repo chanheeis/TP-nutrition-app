@@ -4,12 +4,12 @@ var path=require('path');
 var bodyParser=require('body-parser');
 var mysql=require('mysql');
 
-var conn=mysql.createConnection({
+/*var conn=mysql.createConnection({
     host:'localhost',
     user:'root',
     password:'126327',
     database:'nutrition_db'
-});
+});*/
 
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'/views'));
@@ -17,9 +17,9 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use('/public',express.static(__dirname+'/views/public'));
 
-app.listen(3000,()=>{
+app.listen(8001,()=>{
     console.log("Connected to 3000 PORT!!!");
-    conn.connect();
+    //conn.connect();
 })
 
 app.get('/',(req,res)=>{
