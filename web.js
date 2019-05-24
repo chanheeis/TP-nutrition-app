@@ -19,9 +19,7 @@ app.use('/public',express.static(__dirname+'/views/public'));
 
 app.listen(8001,()=>{
     console.log("Connected to 3000 PORT!!!");
-    conn.connect();
-    console.log("DB Connected!!");
-    
+    conn.connect();    
 })
 
 app.get('/',(req,res)=>{
@@ -97,3 +95,7 @@ app.post('/login',(req,res)=>{
         res.json(responseData);
     })
 })
+
+app.get('/product',(req,res)=>{
+    res.render('product');
+});
