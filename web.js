@@ -7,7 +7,7 @@ var mysql=require('mysql');
 var conn=mysql.createConnection({
     host:'nodejs-004.cafe24.com',
     user:'chanheeis',
-    password:'chanheeis12@',
+    password:'chanheeis12',
     database:'chanheeis'
 });
 
