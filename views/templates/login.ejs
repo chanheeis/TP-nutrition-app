@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <div>
+        ID : 
+            <input 
+                type="text"
+                name="m_id_login"
+                id="m_id_login"><br>
+        PW : 
+            <input 
+                type="password"
+                name="m_password_login"
+                id="m_password_login"><br>
+
+        <button onclick="loginCheck()">Log-In</button>
+        <p id="m_name">Login Result</p>
+    </div>
+
+    <script>
+        function loginCheck(){
+            const m_id_login=document.getElementById("m_id_login").value;
+            const m_password_login=document.getElementById("m_password_login").value;
+
+            const xhr=new XMLHttpRequest();
+            xhr.open('POST','/login');
+            xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+            xhr.onreadystatechange = ()=>{
+                if(xhr.readyState==4&&xhr.status==200){
+                    const data=JSON.parse(xhr.responseText);
+                    //login_status가 false로 넘어온다면,
+                    if(data.login_status===true){
+                        document.getElementById("m_name").innerHTML=`Hello, ${data.m_name}`;
+                    }else{
+                        document.getElementById("m_name").innerHTML="Failed!";
+                    }
+                }
+            }
+            xhr.send(`id=${m_id_login}&pw=${m_password_login}`);
+        }
+    </script>
+</body>
+</html>
