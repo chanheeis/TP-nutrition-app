@@ -4,8 +4,9 @@ var path=require('path');
 var bodyParser=require('body-parser');
 var mysql=require('mysql');
 var multer=require('multer');
-var root=require('./root');
+var root=require('./routes/root');
 
+//파일 시스템 설정
 var storage=multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,`${root}/views/public/image/uploads`)
@@ -19,6 +20,7 @@ var storage=multer.diskStorage({
 
 var upload=multer({storage:storage});
 
+//DB설정
 var conn=mysql.createConnection({
     host:'nodejs-004.cafe24.com',
     user:'chanheeis',
@@ -26,11 +28,12 @@ var conn=mysql.createConnection({
     database:'chanheeis'
 });
 
+//미들웨어 설정
 app.set('view engine','ejs');
-app.set('views',path.join(__dirname,'/views'));
+app.set('views',path.join(root,'/views'));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.use('/public',express.static(__dirname+'/views/public'));
+app.use('/public',express.static(root+'/views/public'));
 
 app.listen(8001,()=>{
     console.log("Connected to 3000 PORT!!!");
@@ -88,7 +91,7 @@ app.get('/id_check',(req,res)=>{
 })
 
 //Login체크를 위한 라우터
-app.post('/login',(req,res)=>{
+app.post('/login/check',(req,res)=>{
     const m_id=req.body.id;
     const m_password=req.body.pw;
 
@@ -111,11 +114,12 @@ app.post('/login',(req,res)=>{
     })
 })
 
-app.get('/product',(req,res)=>{
-    res.render('product');
-});
+app.get('/product/upload',(req,res)=>{
+    //관리자의 권한을 가지고 있는지 먼저 판단해야 함
+    res.render('product_upload');
+})
 
-app.post('/product/insert',upload.single('p_image'),(req,res)=>{
+app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_name=req.body.p_name;
     const p_brand=req.body.p_brand;
     const p_desc=req.body.p_desc;
@@ -148,4 +152,15 @@ app.post('/product/insert',upload.single('p_image'),(req,res)=>{
         console.log(result);
         res.redirect('/product');
     });
+})
+
+//DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지
+app.get('/product',(req,res)=>{
+    const query="SELECT p_id,p_name,p_brand,p_div,p_image FROM product"
+    conn.query(query,(err,result)=>{
+        console.log(result);
+        const viewData=result;
+        res.render('product',{viewData:viewData});    
+    });
+    
 })

@@ -30,7 +30,7 @@
             const m_password_login=document.getElementById("m_password_login").value;
 
             const xhr=new XMLHttpRequest();
-            xhr.open('POST','/login');
+            xhr.open('POST','/login/check');
             xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
             xhr.onreadystatechange = ()=>{
                 if(xhr.readyState==4&&xhr.status==200){
