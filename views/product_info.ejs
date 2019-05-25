@@ -26,9 +26,10 @@
         <li>당류 : <%= viewData.p_sugar %></li>
         <li>단백질 : <%= viewData.p_protein %></li>
         <li>상품 이미지 : <%= viewData.p_image %></li>
-        <li>구분 : <%= viewData.div %></li>
+        <li>구분 : <%= viewData.p_div %></li>
     </ul>
     <a href="/product">돌아가기</a><br>
     <a href="/product/<%= viewData.p_id %>/edit">편집하기</a>
+    <% include ./templates/login %>
 </body>
 </html>
