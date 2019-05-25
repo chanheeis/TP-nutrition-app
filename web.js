@@ -137,7 +137,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_div=req.body.p_div;
 
     //product의 이미지를 file 전송 시스템으로 업로드하는 변수
-    console.log(req.file.originalname);
     const p_image=`public/image/uploads/${req.file.originalname}`;
     
     const query=`INSERT INTO product SET ?`;
@@ -150,6 +149,55 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     };
 
     conn.query(query,data,(err,result)=>{
+        if(err) throw err;
+        res.redirect('/product');
+    });
+})
+
+app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
+    const p_id=req.params.p_id;
+
+    const p_name=req.body.p_name;
+    const p_brand=req.body.p_brand;
+    const p_desc=req.body.p_desc;
+    const p_weight=req.body.p_weight;
+    const p_flavor=req.body.p_flavor;
+    const p_fat=req.body.p_fat;
+    const p_saturated_fat=req.body.p_saturated_fat;
+    const p_trans_fat=req.body.p_trans_fat;
+    const p_cholesterol=req.body.p_cholesterol;
+    const p_sodium=req.body.p_sodium;
+    const p_corbohydrate=req.body.p_corbohydrate;
+    const p_dietary_fiber=req.body.p_dietary_fiber;
+    const p_sugar=req.body.p_sugar;
+    const p_protein=req.body.p_protein;
+    const p_div=req.body.p_div;
+
+    const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
+    console.log(req.params.p_id);
+    console.log(query);
+
+    const data={
+        p_name,p_brand,p_desc,
+        p_weight,p_flavor,p_fat,
+        p_saturated_fat,p_trans_fat,p_cholesterol,
+        p_sodium,p_corbohydrate,p_dietary_fiber,
+        p_sugar,p_protein,p_div
+    };
+
+    if(req.file){
+        const p_image=`public/image/uploads/${req.file.originalname}`;    
+        const data={
+            p_name,p_brand,p_desc,
+            p_weight,p_flavor,p_fat,
+            p_saturated_fat,p_trans_fat,p_cholesterol,
+            p_sodium,p_corbohydrate,p_dietary_fiber,
+            p_sugar,p_protein,p_image,p_div
+        };
+    }
+
+    conn.query(query,data,(err,result)=>{
+        if(err) throw err;
         console.log(result);
         res.redirect('/product');
     });
@@ -159,7 +207,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 app.get('/product',(req,res)=>{
     const query="SELECT p_id,p_name,p_brand,p_div,p_image FROM product"
     conn.query(query,(err,result)=>{
-        console.log(result);
         const viewData=result;
         res.render('product',{viewData:viewData});    
     });
@@ -170,12 +217,19 @@ app.get('/product/:p_id',(req,res)=>{
     const query=`SELECT * FROM product WHERE p_id=${req.params.p_id}`;
     conn.query(query,(err,result)=>{
         if(err) throw err;
-        console.log(result[0]);
         res.render('product_info',{viewData:result[0]})
     })
 })
 
 //해당 상품을 클릭하면, 관리자의 권한으로 해당 상품의 정보를 변경할 수 있도록 하는 페이지
 app.get('/product/:p_id/edit',(req,res)=>{
-    res.send(req.params.p_id);
+    const queryStr=req.params.p_id;
+    console.log(queryStr);
+    
+    const query=`SELECT * FROM product WHERE p_id=${queryStr}`;
+    conn.query(query,(err,result)=>{
+        if(err) throw err;
+        console.log(result[0])
+        res.render('product_edit',{viewData:result[0]})
+    })
 })
