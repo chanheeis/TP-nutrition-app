@@ -19,15 +19,18 @@
         1) div태그
         2) 상세보기 버튼
         3) 수정하기 버튼
+
+        향후 10항목마다 페이지별로 나누어 디스플레이할 수 있는 법 적용하기
     !-->
     <ul>
         <% viewData.forEach(function(data){ %>
         <div>
-            <li><img src="<%= data.p_image %>"></li>
-            <li><%= data.p_id %></li>
-            <li><%= data.p_name %></li>
-            <li><%= data.p_brand %></li>
-            <li><%= data.p_div %></li>
+            <li><img src="<%= data.p_image %>" width="100px" height="100px"></li>
+            <li>상품 아이디 : <%= data.p_id %></li>
+            <li>상품명 : <%= data.p_name %></li>
+            <li>브랜드 : <%= data.p_brand %></li>
+            <li>상품 구분 : <%= data.p_div %></li>
+            <a href="product/<%= data.p_id %>">상세보기</a>
         </div>
         <% }) %>
     </ul>

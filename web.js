@@ -137,7 +137,8 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_div=req.body.p_div;
 
     //product의 이미지를 file 전송 시스템으로 업로드하는 변수
-    const p_image=req.file.path;
+    console.log(req.file.originalname);
+    const p_image=`public/image/uploads/${req.file.originalname}`;
     
     const query=`INSERT INTO product SET ?`;
     const data={
@@ -162,5 +163,19 @@ app.get('/product',(req,res)=>{
         const viewData=result;
         res.render('product',{viewData:viewData});    
     });
-    
+})
+
+//해당 상품을 클릭하면, 해당 상품의 정보를 상세하게 볼 수 있는 페이지
+app.get('/product/:p_id',(req,res)=>{
+    const query=`SELECT * FROM product WHERE p_id=${req.params.p_id}`;
+    conn.query(query,(err,result)=>{
+        if(err) throw err;
+        console.log(result[0]);
+        res.render('product_info',{viewData:result[0]})
+    })
+})
+
+//해당 상품을 클릭하면, 관리자의 권한으로 해당 상품의 정보를 변경할 수 있도록 하는 페이지
+app.get('/product/:p_id/edit',(req,res)=>{
+    res.send(req.params.p_id);
 })

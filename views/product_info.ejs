@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Product Info Page</h2>
+    <ul>
+        <li>ID : <%= viewData.p_id %></li>
+        <li>이름 : <%= viewData.p_name %></li>
+        <li>브랜드 : <%= viewData.p_brand %></li>
+        <li>설명 : <%= viewData.p_desc %></li>
+        <li>중량 : <%= viewData.p_weight %></li>
+        <li>맛 : <%= viewData.p_flavor %></li>
+        <li>칼로리 : <%= viewData.p_calorie %></li>
+        <li>지방 : <%= viewData.p_fat %></li>
+        <li>불포화 지방 : <%= viewData.p_saturated_fat %></li>
+        <li>트랜스지방 : <%= viewData.p_trans_fat %></li>
+        <li>콜레스테롤 : <%= viewData.p_cholesterol %></li>
+        <li>탄수화물 총량 : <%= viewData.p_corbohydrate %></li>
+        <li>나트륨 : <%= viewData.p_sodium %></li>
+        <li>식이섬유 : <%= viewData.p_dietary_fiber %></li>
+        <li>당류 : <%= viewData.p_sugar %></li>
+        <li>단백질 : <%= viewData.p_protein %></li>
+        <li>상품 이미지 : <%= viewData.p_image %></li>
+        <li>구분 : <%= viewData.div %></li>
+    </ul>
+    <a href="/product">돌아가기</a><br>
+    <a href="/product/<%= viewData.p_id %>/edit">편집하기</a>
+</body>
+</html>
