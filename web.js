@@ -10,11 +10,9 @@ var root=require('./routes/root');
 var storage=multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,`${root}/views/public/image/uploads`)
-        console.log("destination determined!");
     },
     filename: function(req,file,cb){
         cb(null,file.originalname);
-        console.log("name is determined!");
     }
 });
 
@@ -64,8 +62,6 @@ app.post('/join',(req,res)=>{
     
     conn.query(query,data,(err,result)=>{
         if(err) throw err;
-        
-        console.log(result);
         res.redirect('/');
     })
 })
@@ -150,7 +146,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 
     conn.query(query,data,(err,result)=>{
         if(err) throw err;
-        res.redirect('/product');
+        res.redirect('/product?page=1');
     });
 })
 
@@ -174,8 +170,6 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
     const p_div=req.body.p_div;
 
     const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
-    console.log(req.params.p_id);
-    console.log(query);
 
     const data={
         p_name,p_brand,p_desc,
@@ -198,14 +192,15 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
 
     conn.query(query,data,(err,result)=>{
         if(err) throw err;
-        console.log(result);
-        res.redirect('/product');
+        res.redirect('/product?page=1');
     });
 })
 
-//DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지
+//DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
-    const query="SELECT p_id,p_name,p_brand,p_div,p_image FROM product"
+    const page=req.query.page;
+    const query=`SELECT p_id,p_name,p_image FROM product LIMIT ${(page-1)*20},${page*20}`;
+    
     conn.query(query,(err,result)=>{
         const viewData=result;
         res.render('product',{viewData:viewData});    
@@ -224,12 +219,14 @@ app.get('/product/:p_id',(req,res)=>{
 //해당 상품을 클릭하면, 관리자의 권한으로 해당 상품의 정보를 변경할 수 있도록 하는 페이지
 app.get('/product/:p_id/edit',(req,res)=>{
     const queryStr=req.params.p_id;
-    console.log(queryStr);
     
     const query=`SELECT * FROM product WHERE p_id=${queryStr}`;
     conn.query(query,(err,result)=>{
         if(err) throw err;
-        console.log(result[0])
         res.render('product_edit',{viewData:result[0]})
     })
+})
+
+app.get('/test',(req,res)=>{
+    res.send("Test Page");
 })
