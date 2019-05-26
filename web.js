@@ -231,7 +231,7 @@ app.get('/product/:p_id/edit',(req,res)=>{
 app.get('/test', function (req, res) {
     const client_id="rfsNNjH2NfhNhhTNnPfk";
     const client_secret="uPeOXOPI_k";
-    var url = 'https://openapi.naver.com/v1/search/shop.json?query=comment'; // json 결과
+    var url = 'https://openapi.naver.com/v1/search/shop.json?query=comment&'; // json 결과
     
     var xhttp=new XMLHttpRequest();
     xhttp.open('GET',url,true);
@@ -239,12 +239,14 @@ app.get('/test', function (req, res) {
     xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
     xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
 
-    xhttp.onreadystatechange=()=>{
+    xhttp.onreadystatechange=function(){
         if(xhttp.readyState===XMLHttpRequest.DONE && xhttp.status===200){
-            const data=JSON.parse(xhttp.responseText);
-            console.log(data);
-            res.send(data);
+            console.log("Wating....");
+            /*const data=JSON.parse(xhttp.responseText);
+            console.log(data.total);
+            res.send(data.total);*/
         }else{
+            console.log(`Something Wrong!! Ready State is ${xhttp.readyState}`);
             console.log(`Something Wrong!! Status is ${xhttp.status}`);
         }    
     }
