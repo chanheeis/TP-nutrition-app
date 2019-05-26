@@ -1,13 +1,14 @@
-var express=require('express');
-var app=express();
-var path=require('path');
-var bodyParser=require('body-parser');
-var mysql=require('mysql');
-var multer=require('multer');
-var root=require('./routes/root');
+const express=require('express');
+const app=express();
+const path=require('path');
+const bodyParser=require('body-parser');
+const mysql=require('mysql');
+const multer=require('multer');
+const root=require('./routes/root');
+const request = require('request');
 
 //파일 시스템 설정
-var storage=multer.diskStorage({
+const storage=multer.diskStorage({
     destination: function(req,file,cb){
         cb(null,`${root}/views/public/image/uploads`)
     },
@@ -16,10 +17,10 @@ var storage=multer.diskStorage({
     }
 });
 
-var upload=multer({storage:storage});
+const upload=multer({storage:storage});
 
 //DB설정
-var conn=mysql.createConnection({
+const conn=mysql.createConnection({
     host:'nodejs-004.cafe24.com',
     user:'chanheeis',
     password:'chanheeis12@',
@@ -227,6 +228,26 @@ app.get('/product/:p_id/edit',(req,res)=>{
     })
 })
 
-app.get('/test',(req,res)=>{
-    res.send("Test Page");
-})
+app.get('/test', function (req, res) {
+    const Client_Id="rfsNNjH2NfhNhhTNnPfk";
+    const Client_Secret="uPeOXOPI_k";
+
+    var url = 'https://openapi.naver.com/v1/search/shop.json?query=마사지기계'; // json 결과
+    var opt = {
+        url,
+        headers: {'X-Naver-Client-Id':Client_Id, 'X-Naver-Client-Secret': Client_Secret}
+     };
+
+    request.get(opt, function (err, response, body) {
+      if (!err && response.statusCode == 200) {
+        res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
+        console.log(`Response : ${response}`);
+        console.log(`Body : ${body}`);
+        res.send(body);
+      } else {
+        //res.status(response.statusCode).end();
+        console.log('error = ' + response.statusCode);
+      }
+    });
+
+  });
