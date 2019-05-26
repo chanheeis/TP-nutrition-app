@@ -5,7 +5,7 @@ const bodyParser=require('body-parser');
 const mysql=require('mysql');
 const multer=require('multer');
 const root=require('./routes/root');
-const request = require('request');
+var XMLHttpRequest=require('xmlhttprequest').XMLHttpRequest;
 
 //파일 시스템 설정
 const storage=multer.diskStorage({
@@ -229,25 +229,24 @@ app.get('/product/:p_id/edit',(req,res)=>{
 })
 
 app.get('/test', function (req, res) {
-    const Client_Id="rfsNNjH2NfhNhhTNnPfk";
-    const Client_Secret="uPeOXOPI_k";
+    const client_id="rfsNNjH2NfhNhhTNnPfk";
+    const client_secret="uPeOXOPI_k";
+    var url = 'https://openapi.naver.com/v1/search/shop.json?query=comment'; // json 결과
+    
+    var xhttp=new XMLHttpRequest();
+    xhttp.open('GET',url,true);
+    
+    xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
+    xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
 
-    var url = 'https://openapi.naver.com/v1/search/shop.json?query=마사지기계'; // json 결과
-    var opt = {
-        url,
-        headers: {'X-Naver-Client-Id':Client_Id, 'X-Naver-Client-Secret': Client_Secret}
-     };
-
-    request.get(opt, function (err, response, body) {
-      if (!err && response.statusCode == 200) {
-        res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-        console.log(`Response : ${response}`);
-        console.log(`Body : ${body}`);
-        res.send(body);
-      } else {
-        //res.status(response.statusCode).end();
-        console.log('error = ' + response.statusCode);
-      }
-    });
-
+    xhttp.onreadystatechange=()=>{
+        if(xhttp.readyState===XMLHttpRequest.DONE && xhttp.status===200){
+            const data=JSON.parse(xhttp.responseText);
+            console.log(data);
+            res.send(data);
+        }else{
+            console.log(`Something Wrong!! Status is ${xhttp.status}`);
+        }    
+    }
+    xhttp.send();
   });
