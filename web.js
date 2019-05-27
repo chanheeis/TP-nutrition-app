@@ -292,7 +292,6 @@ app.get('/test', function (req, res) {
                     xhttp.onreadystatechange=()=>{
                         if(xhttp.readyState==4 && xhttp.status==200){
                             const response=JSON.parse(xhttp.responseText);
-
                             //AJAX요청 결과로 반환되는 lPrice에 대한 배열 반복문을 정의 
                             if(response.items.length==0){
                                 arr[index].lpriceList=["null"];
@@ -304,14 +303,11 @@ app.get('/test', function (req, res) {
                                         arr[index].lpriceList.push(resItem.lprice);
                                     }
                                 })
-                            }                    
+                            }
                         }
-
                     }
                     xhttp.send();
                 })
-                console.log(data);
-                resolve(data);
             }else{
                 reject("Data is NULL!!__3");
             }
