@@ -90,13 +90,30 @@
             color: white;
             border-radius: 0 20px 0 0;
         }
+
+        #content{
+            width:1304px;
+            margin:0 auto;
+            padding: 0px 50px;
+            padding-top: 150px;
+            padding-bottom: 20px;
+            overflow: hidden;
+            border-left: 2px solid #dddddd;
+            border-right: 2px solid #dddddd;
+        }
+
+        #content :hover{
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
     <% include ./templates/header %>
-    <form action="/recommend" method="POST">
+    <div id="content">
+        <form action="/recommend" method="POST">
         
-    </form>
+        </form>
+    </div>
     <% include ./templates/login %>
 
 </body>

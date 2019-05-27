@@ -95,93 +95,109 @@
             color: white;
             border-radius: 0 20px 0 0;
         }
+
+        #content{
+            width:1304px;
+            margin:0 auto;
+            padding: 0px 50px;
+            padding-top: 150px;
+            padding-bottom: 20px;
+            overflow: hidden;
+            border-left: 2px solid #dddddd;
+            border-right: 2px solid #dddddd;
+        }
+
+        #content :hover{
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
     </style>
     
 </head>
 <body>
     <% include ./templates/header %>
-    <form 
-        action="/join" 
-        method="post" 
-        onsubmit="return submitCheck()">
-        
-        Name : 
-            <input 
-                type="text" 
-                name="m_name" 
-                maxlength="20" 
-                size="20"
-                required><br>
-        ID : 
-            <input 
-                type="text" 
-                name="m_id"
-                maxlength="10" 
-                size="10"
-                id="m_id"
-                required>
-
-            <button onclick="IDCheck()">CHECK</button><br>
-            <p id="m_id_result">ID 확인 결과</p>
-        PW : 
-            <input 
-                type="password" 
-                name="m_password"
-                id="m_password"
-                maxlength="20" 
-                required> &nbsp;&nbsp; 
-
-        PW 확인 : 
-            <input 
-                type="password"
-                id="m_password_check"
-                maxlength="20"
-                required
-                > &nbsp;&nbsp;
-
-            <button onclick="passwordCheck()">CHECK</button><br>
-
-        <p id="m_password_result">패스워드 확인 결과</p>
-
-        BIRTH :
-            <select name="m_birth_y" required>
-                <option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option>
-                <option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option>
-                <option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option>
-                <option value="2010">2010</option><option value="2009">2009</option><option value="2008">2008</option>
-                <option value="2007">2007</option><option value="2006">2006</option><option value="2005">2005</option>
-                <option value="2004">2004</option><option value="2003">2003</option><option value="2002">2002</option>
-                <option value="2001">2001</option><option value="2000">2000</option><option value="1999">1999</option>
-            </select>Y
-
-            <select name="m_birth_m" required>
-                <option value="01">01</option><option value="02">02</option><option value="03">03</option>
-                <option value="04">04</option><option value="05">05</option><option value="06">06</option>
-                <option value="07">07</option><option value="08">08</option><option value="09">09</option>
-                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-            </select>M
-
-            <select name="m_birth_d" required>
-                <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option>
-                <option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option>
-                <option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
-                <option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option>
-                <option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option>
-                <option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option>
-                <option value="29">29</option><option value="30">30</option><option value="31">31</option>
-            </select>D<br>
+    <div id="content">
+        <form 
+            action="/join" 
+            method="post" 
+            onsubmit="return submitCheck()">
             
-            SEX :
-                <input type="radio" name="m_sex" value="M" checked>Male &nbsp;
-                <input type="radio" name="m_sex" value="F">Female <br>
-            
-            EMail :
-                <input type="text" name="m_email_1" required>@<input type="text" name="m_email_2" required><br>
-            <input type="submit" value="JOIN"><br>
+            Name : 
+                <input 
+                    type="text" 
+                    name="m_name" 
+                    maxlength="20" 
+                    size="20"
+                    required><br>
+            ID : 
+                <input 
+                    type="text" 
+                    name="m_id"
+                    maxlength="10" 
+                    size="10"
+                    id="m_id"
+                    required>
 
-    </form>
-    <a href="/">To Home</a>
+                <button onclick="IDCheck()">CHECK</button><br>
+                <p id="m_id_result">ID 확인 결과</p>
+            PW : 
+                <input 
+                    type="password" 
+                    name="m_password"
+                    id="m_password"
+                    maxlength="20" 
+                    required> &nbsp;&nbsp; 
+
+            PW 확인 : 
+                <input 
+                    type="password"
+                    id="m_password_check"
+                    maxlength="20"
+                    required
+                    > &nbsp;&nbsp;
+
+                <button onclick="passwordCheck()">CHECK</button><br>
+
+            <p id="m_password_result">패스워드 확인 결과</p>
+
+            BIRTH :
+                <select name="m_birth_y" required>
+                    <option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option>
+                    <option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option>
+                    <option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option>
+                    <option value="2010">2010</option><option value="2009">2009</option><option value="2008">2008</option>
+                    <option value="2007">2007</option><option value="2006">2006</option><option value="2005">2005</option>
+                    <option value="2004">2004</option><option value="2003">2003</option><option value="2002">2002</option>
+                    <option value="2001">2001</option><option value="2000">2000</option><option value="1999">1999</option>
+                </select>Y
+
+                <select name="m_birth_m" required>
+                    <option value="01">01</option><option value="02">02</option><option value="03">03</option>
+                    <option value="04">04</option><option value="05">05</option><option value="06">06</option>
+                    <option value="07">07</option><option value="08">08</option><option value="09">09</option>
+                    <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                </select>M
+
+                <select name="m_birth_d" required>
+                    <option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option>
+                    <option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option>
+                    <option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                    <option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option>
+                    <option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option>
+                    <option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                    <option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option>
+                    <option value="29">29</option><option value="30">30</option><option value="31">31</option>
+                </select>D<br>
+                
+                SEX :
+                    <input type="radio" name="m_sex" value="M" checked>Male &nbsp;
+                    <input type="radio" name="m_sex" value="F">Female <br>
+                
+                EMail :
+                    <input type="text" name="m_email_1" required>@<input type="text" name="m_email_2" required><br>
+                <input type="submit" value="JOIN"><br>
+
+        </form>
+    </div>
     <script src="public/js/join.js"></script>
 </body>
 </html>

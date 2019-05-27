@@ -7,65 +7,286 @@
     <title>Document</title>
     <style>
         *{
+            margin:0;
+            padding:0;
             box-sizing: border-box;
-        }
-        #product-list{
-            height:600px;
-            width:680px;
+            font-family: 'Noto Sans KR', sans-serif;
         }
 
-        #product-list:first-child{
-            margin-left:15px;
+        body {
+            color: #555555;
+            font-weight: bold;
+            width: 100%;
+            height: 100%;
+            cursor: default;
         }
 
-        div.product-wrapper{
-            width:150px;
-            height:200px;
-            border: 1px solid #262626;
-            margin-right:15px;
-            overflow: hidden;
-            float:left;
-            margin-bottom:15px;
+        #header{
+            margin:0 auto;
+            width:100%;
+            height:60px;
+            background-color: white;
+            position: fixed;
+            margin-top:0px;
         }
 
-        .product-image{
-            display: block;
-            margin: 10px auto;
-            
+        #header h1 img {
+            height: 50px; 
         }
 
-        #product-list a{
+        #header h1{
+            text-align: center;
+            padding-top:6px;
+        }
+
+        #gnb-wrapper{
+            width:100%;
+            background-color: #dddddd;
+            margin-top: 60px;
+            position: fixed;
+        }
+
+        #gnb a{
             text-decoration: none;
-            color:#262626;
+            font-weight: bold;
+            color: #4285f4;
+
         }
+
+        #gnb ul{
+            display: block;
+            overflow: hidden;
+        }
+
+        #gnb li{
+            line-height: 42px;
+            display: inline-block;
+            width:120px; 
+            height:50px;
+            padding-top: 2px;
+            text-align: center;
+            float: left;
+        }
+
+        #gnb li:visited{
+            text-decoration: none;
+            color: #4285f4;
+        }
+
+        #gnb li:hover{
+            border-bottom:4px solid #4285f4;
+        }
+
+        #gnb li:first-child{
+            margin-left:0px;
+        }
+
+        #gnb li:last-child{
+            margin-right: 0px;
+        }
+
+        #green {
+            background-color: #4285f4;
+            color: white;
+            border-radius: 0 20px 0 0;
+        }
+
+        #content{
+            width:1304px;
+            margin:0 auto;
+            padding: 0px 50px;
+            padding-top: 150px;
+            padding-bottom: 20px;
+            overflow: hidden;
+            border-left: 2px solid #dddddd;
+            border-right: 2px solid #dddddd;
+        }
+
+        #content :hover{
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .product{
+            width: 290px;
+            margin: 5px;
+            padding: 20px 0;
+            background-color: white;
+            float:left;
+            border-radius: 10px 10px 10px 10px;
+            color: #555555
+        }
+
+        .product :hover{
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
+            color: #555555
+        }
+
+        .product :active{
+            color: #555555;
+            text-decoration: none;
+        }
+
+        .product :visited{
+            color: #555555;
+            text-decoration: none;
+        }
+
+        .product-img{
+            margin: 0px 25px;
+            padding-top: 10px;
+            width: 240px;
+            text-align: center;
+            background-color: white;
+        }
+
+        .product-img{
+            height: 200px;
+        }
+
+        .product-info{
+            margin: 0px 25px;
+            width: 240px;
+            height: 120px;
+            padding: 10px 0px;
+            border-radius: 10px 10px 10px 10px;
+            background-color: white;
+        }
+
+        .product-info p{
+            width: 220px;
+            text-align: left;
+        }
+
+        .product-info span{
+            padding-left: 15px;
+        }
+
+        .sns {
+            height: 50px;
+            padding: 10px 15px;
+            margin: 0px 25px;
+            background-color: white;
+        }
+
+        .sns div{
+            width: 60px;
+            float:left; 
+            padding-right: 8px;
+        }
+
+        .sns div img{
+            height: 30px;
+            float:left; 
+            padding-right: 5px;
+
+        }
+
+        /**/
+        #pageW{
+            text-align: center;
+            margin: 0px auto;
+            padding-bottom: 10px;
+            background-color: white;
+            width:1304px;
+            overflow: hidden;
+            border-left: 2px solid #dddddd;
+            border-right: 2px solid #dddddd;
+        }
+
+        #page{
+            margin: 0px 550px;
+            background-color: yellow;
+        }
+
+        #page div{
+            color: #aaaaaa;
+            width: 30px;
+            height: 30px;
+            float: left;
+            margin: 0px 5px;
+        }
+
+        #page div :hover{
+            color: #aaaaaa;
+            border-bottom: 2px solid #aaaaaa;
+        }
+
+        #page div :visited{
+            color: #aaaaaa;
+            text-decoration: none;
+        }
+
+        #page div :active{
+            color: #aaaaaa;
+            text-decoration: none;
+        }
+
+        #page #after{
+            background-color: #aaaaaa;
+            color: white;
+        }
+
+        #page #after :hover{
+            background-color: #aaaaaa;
+            color: white;
+        }
+
+        /**/
+        #footer{
+            width:100%;
+            height:80px;
+            text-align: center;
+            padding-top:8px;
+            background-color: #4285f4; 
+            color: white;
+        }
+
     </style>
 </head>
 <body>
     <h1>Product Page</h1>
-    <div id="product-list">
+    <% include ./templates/header %>
+    <div id="content">
         <% viewData.forEach(function(data){ %>
         <a href="product/<%= data.p_id %>">
-            <div class="product-wrapper">
-                <img class="product-image" src="<%= data.p_image %>" width="120px" height="120px">
-                <%= data.p_name %>
-                <div class="product-icon-wrapper">
-                    <img width="20px" height="20px" src="public/image/good.png">10
-                    <img width="20px" height="20px" src="public/image/bad.png">3
-                    <img width="20px" height="20px" src="public/image/comment.png">5
+            <div class="product">
+                <div class="product-img">
+                    <img src="<%= data.p_image %>">
+                </div>
+                <div class="product-info">
+                        <p><span><%= data.p_brand %></span></p>
+                        <p><span><%= data.p_name %></span></p>
+                        <p><span>53,900</span></p>
+                </div>
+                <div class="sns">
+                    <div>
+                        <img src="public/image/good.png">
+                        <p>5</p>
+                    </div>
+                    <div>
+                        <img src="public/image/bad.png">
+                        <p>2</p>
+                    </div>
+                    <div>
+                        <img src="public/image/comment.png">
+                        <p>4</p>
+                    </div>
                 </div>
             </div>
         </a>
         <% }) %>
     </div>
+        <div id="pageW">
+            <div id="page">
+                <a href="/product?page=1"><div id="after"><h3>1</h3></div></a>
+                <a href="/product?page=2"><div><h3>2</h3></div></a>
+                <a href="/product?page=3"><div><h3>3</h3></div></a>
+                <a href="/product?page=4"><div><h3>4</h3></div></a>
+                <a href="/product?page=5"><div><h3>5</h3></div></a>
+            </div>
+        </div> 
+    
     
     <% include ./templates/login %>
-    <a href="/product?page=1">To Product Page</a><br>
-    <a href="/product/upload">To Product Upload Page</a><br>
-
-    <a href="/product?page=1">Page 1</a>
-    <a href="/product?page=2">Page 2</a>
-    <a href="/product?page=3">Page 3</a>
-    <a href="/product?page=4">Page 4</a>
-    <a href="/product?page=5">Page 5</a>
 </body>
 </html>

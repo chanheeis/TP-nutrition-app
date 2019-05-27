@@ -89,8 +89,10 @@ app.get('/id_check',(req,res)=>{
 
 //Login체크를 위한 라우터
 app.post('/login/check',(req,res)=>{
-    const m_id=req.body.id;
-    const m_password=req.body.pw;
+    const m_id=req.body.m_id_login;
+    const m_password=req.body.m_password_login;
+
+    console.log(`ID : ${m_id}, PW : ${m_password}`);
 
     const queryArr=[m_id,m_password]
     const query=`SELECT m_name FROM member WHERE m_id=? AND m_password=?`;
@@ -102,12 +104,14 @@ app.post('/login/check',(req,res)=>{
             m_name:null,
             login_status:false
         };
-
+        
+        //로그인에 성공하여, 해당 로그인 정보를 세션에 저장하기 위해 해당 라우터로 분기함
         if(results[0]){
             responseData.m_name=results[0].m_name;
             responseData.login_status=true;
         }
-        res.json(responseData);
+        console.log(`Login Result : ${responseData.login_status}`);
+        res.redirect('/');
     })
 })
 
@@ -155,7 +159,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
     const page=req.query.page;
-    const query=`SELECT p_id,p_name,p_image FROM product LIMIT ${(page-1)*20},${page*20}`;
+    const query=`SELECT p_id,p_name,p_image,p_brand FROM product LIMIT ${(page-1)*20},${page*20}`;
     
     conn.query(query,(err,result)=>{
         const viewData=result;
@@ -247,6 +251,8 @@ app.get('/product/:p_id/delete',(req,res)=>{
     })
 
 })
+
+//해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
 app.get('/test', function (req, res) {
     getDataFromDB().then(queryStringfy).catch(err=>console.log(err))

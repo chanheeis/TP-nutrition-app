@@ -7,8 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-
-    <div>
+    <form action="/login/check" method="POST">
         ID : 
             <input 
                 type="text"
@@ -20,31 +19,7 @@
                 name="m_password_login"
                 id="m_password_login"><br>
 
-        <button onclick="loginCheck()">Log-In</button>
-        <p id="m_name">Login Result</p>
-    </div>
-
-    <script>
-        function loginCheck(){
-            const m_id_login=document.getElementById("m_id_login").value;
-            const m_password_login=document.getElementById("m_password_login").value;
-
-            const xhr=new XMLHttpRequest();
-            xhr.open('POST','/login/check');
-            xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-            xhr.onreadystatechange = ()=>{
-                if(xhr.readyState==4&&xhr.status==200){
-                    const data=JSON.parse(xhr.responseText);
-                    //login_status가 false로 넘어온다면,
-                    if(data.login_status===true){
-                        document.getElementById("m_name").innerHTML=`Hello, ${data.m_name}`;
-                    }else{
-                        document.getElementById("m_name").innerHTML="Failed!";
-                    }
-                }
-            }
-            xhr.send(`id=${m_id_login}&pw=${m_password_login}`);
-        }
-    </script>
+        <input type="submit" value="Login">
+    </form>
 </body>
 </html>
