@@ -30,6 +30,6 @@
     </ul>
     <a href="/product?page=1">돌아가기</a><br>
     <a href="/product/<%= viewData.p_id %>/edit">편집하기</a>
-    <% include ./templates/login %>
+    <%- include('templates/login',{loginInfo:loginInfo}) %>
 </body>
 </html>

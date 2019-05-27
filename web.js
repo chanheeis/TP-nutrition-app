@@ -5,7 +5,8 @@ const bodyParser=require('body-parser');
 const mysql=require('mysql');
 const multer=require('multer');
 const root=require('./routes/root');
-var XMLHttpRequest=require('xmlhttprequest').XMLHttpRequest;
+const XMLHttpRequest=require('xmlhttprequest').XMLHttpRequest;
+const session=require('express-session');
 
 //파일 시스템 설정
 const storage=multer.diskStorage({
@@ -30,22 +31,41 @@ const conn=mysql.createConnection({
 //미들웨어 설정
 app.set('view engine','ejs');
 app.set('views',path.join(root,'/views'));
+
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use('/public',express.static(root+'/views/public'));
 
+//미들웨어 세션 설정 파트
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true
+}))
+
 app.listen(8001,()=>{
     console.log("Connected to 3000 PORT!!!");
     console.log(`This App's Root is ${root}.`);
-    conn.connect();    
+    conn.connect();
+
 })
 
 app.get('/',(req,res)=>{
-    res.render('home');
+    //View에 렌더하기 위해 넘겨줄 변수들을 정의하고 있음
+    const loginInfo={
+        loginStatus:req.session.loginStatus,
+        userName:req.session.userName
+    };
+    res.render('home',{loginInfo:loginInfo});
 })
 
 app.get('/join',(req,res)=>{
-    res.render('join');
+    const loginInfo={
+            loginStatus:req.session.loginStatus,
+            userName:req.session.userName
+        }
+    
+    res.render('join',{loginInfo:loginInfo});
 })
 
 app.post('/join',(req,res)=>{
@@ -92,6 +112,7 @@ app.post('/login/check',(req,res)=>{
     const m_id=req.body.m_id_login;
     const m_password=req.body.m_password_login;
 
+    //login.ejs에서 넘어온 ID와 PW의 정보를 출력함
     console.log(`ID : ${m_id}, PW : ${m_password}`);
 
     const queryArr=[m_id,m_password]
@@ -99,25 +120,27 @@ app.post('/login/check',(req,res)=>{
 
     conn.query(query,queryArr,(err,results)=>{
         if(err) throw err;
-        
-        const responseData={
-            m_name:null,
-            login_status:false
-        };
-        
+
         //로그인에 성공하여, 해당 로그인 정보를 세션에 저장하기 위해 해당 라우터로 분기함
         if(results[0]){
-            responseData.m_name=results[0].m_name;
-            responseData.login_status=true;
+            console.log(results);
+            req.session.userName=results[0].m_name;
+            req.session.loginStatus=true;
+            console.log(`로그인 성공 후 세션의 상태: ${req.session.userName},${req.session.loginStatus}`);
         }
-        console.log(`Login Result : ${responseData.login_status}`);
         res.redirect('/');
     })
 })
 
-app.get('/product/upload',(req,res)=>{
+app.get('/product/upload',(req,res)=>{ 
     //관리자의 권한을 가지고 있는지 먼저 판단해야 함
-    res.render('product_upload');
+    const viewData={
+        loginInfo:{
+            loginStatus:req.session.loginStatus,
+            userName:req.session.userName
+        }
+    };
+    res.render('product_upload',{viewData:viewData});
 })
 
 app.post('/product/upload',upload.single('p_image'),(req,res)=>{
@@ -162,8 +185,11 @@ app.get('/product',(req,res)=>{
     const query=`SELECT p_id,p_name,p_image,p_brand FROM product LIMIT ${(page-1)*20},${page*20}`;
     
     conn.query(query,(err,result)=>{
-        const viewData=result;
-        res.render('product',{viewData:viewData});    
+        const loginInfo={
+            loginStatus:req.session.loginStatus,
+            userName:req.session.userName
+        }
+        res.render('product',{viewData:result,loginInfo:loginInfo});    
     });
 })
 
@@ -172,7 +198,12 @@ app.get('/product/:p_id',(req,res)=>{
     const query=`SELECT * FROM product WHERE p_id=${req.params.p_id}`;
     conn.query(query,(err,result)=>{
         if(err) throw err;
-        res.render('product_info',{viewData:result[0]})
+            const loginInfo={
+                loginStatus:req.session.loginStatus,
+                userName:req.session.userName
+            }
+            console.log(result);
+        res.render('product_info',{viewData:result[0],loginInfo:loginInfo})
     })
 })
 

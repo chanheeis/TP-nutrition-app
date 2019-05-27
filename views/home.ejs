@@ -111,10 +111,16 @@
     <% include ./templates/header %>
     <div id="content">
         <form action="/recommend" method="POST">
-        
+            <h1>User Input Page</h1>
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="text">
+            <input type="submit">
         </form>
     </div>
-    <% include ./templates/login %>
+    <%- include('templates/login',{loginInfo:loginInfo}) %>
 
 </body>
 </html>
