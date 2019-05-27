@@ -152,52 +152,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     });
 })
 
-app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
-    const p_id=req.params.p_id;
-
-    const p_name=req.body.p_name;
-    const p_brand=req.body.p_brand;
-    const p_desc=req.body.p_desc;
-    const p_weight=req.body.p_weight;
-    const p_flavor=req.body.p_flavor;
-    const p_fat=req.body.p_fat;
-    const p_saturated_fat=req.body.p_saturated_fat;
-    const p_trans_fat=req.body.p_trans_fat;
-    const p_cholesterol=req.body.p_cholesterol;
-    const p_sodium=req.body.p_sodium;
-    const p_corbohydrate=req.body.p_corbohydrate;
-    const p_dietary_fiber=req.body.p_dietary_fiber;
-    const p_sugar=req.body.p_sugar;
-    const p_protein=req.body.p_protein;
-    const p_div=req.body.p_div;
-
-    const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
-
-    const data={
-        p_name,p_brand,p_desc,
-        p_weight,p_flavor,p_fat,
-        p_saturated_fat,p_trans_fat,p_cholesterol,
-        p_sodium,p_corbohydrate,p_dietary_fiber,
-        p_sugar,p_protein,p_div
-    };
-
-    if(req.file){
-        const p_image=`public/image/uploads/${req.file.originalname}`;    
-        const data={
-            p_name,p_brand,p_desc,
-            p_weight,p_flavor,p_fat,
-            p_saturated_fat,p_trans_fat,p_cholesterol,
-            p_sodium,p_corbohydrate,p_dietary_fiber,
-            p_sugar,p_protein,p_image,p_div
-        };
-    }
-
-    conn.query(query,data,(err,result)=>{
-        if(err) throw err;
-        res.redirect('/product?page=1');
-    });
-})
-
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
     const page=req.query.page;
@@ -229,14 +183,123 @@ app.get('/product/:p_id/edit',(req,res)=>{
     })
 })
 
-app.get('/test', function (req, res) {
+app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
+    const submitType=req.body.submitType;
+    const p_id=req.params.p_id;
+    console.log(submitType);
+    
+    //삭제하기 버튼으로 해당 페이지에 접근했을 때 수행
+    if(submitType==="삭제하기"){
+        res.redirect(`/product/${p_id}/delete`);
+    //편집완료 버튼으로 해당 페이지에 접근했을 때 수행
+    }else if(submitType==="편집완료"){
+        const p_calorie=req.body.p_calorie;
+        const p_name=req.body.p_name;
+        const p_brand=req.body.p_brand;
+        const p_desc=req.body.p_desc;
+        const p_weight=req.body.p_weight;
+        const p_flavor=req.body.p_flavor;
+        const p_fat=req.body.p_fat;
+        const p_saturated_fat=req.body.p_saturated_fat;
+        const p_trans_fat=req.body.p_trans_fat;
+        const p_cholesterol=req.body.p_cholesterol;
+        const p_sodium=req.body.p_sodium;
+        const p_corbohydrate=req.body.p_corbohydrate;
+        const p_dietary_fiber=req.body.p_dietary_fiber;
+        const p_sugar=req.body.p_sugar;
+        const p_protein=req.body.p_protein;
+        const p_div=req.body.p_div;
+    
+        const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
+        let data={
+            p_name,p_brand,p_desc,
+            p_weight,p_flavor,p_fat,
+            p_saturated_fat,p_trans_fat,p_cholesterol,
+            p_sodium,p_corbohydrate,p_dietary_fiber,
+            p_sugar,p_protein,p_div,p_calorie   
+        }
+    
+        if(req.file){
+            const p_image=`public/image/uploads/${req.file.originalname}`;    
+            data.p_image=p_image;
+        }
+    
+        conn.query(query,data,(err,result)=>{
+            if(err) throw err;
+            console.log(result);
+            res.redirect('/product?page=1');
+        });
+    }else{
+        res.send("잘못된 페이지 접근입니다.")
+    }
+})
 
+//해당 상품을 삭제하는 페이지이므로, 반드시 관리자의 권한을 가지고 있는 사용자만이 접근할 수 있어야 함
+app.get('/product/:p_id/delete',(req,res)=>{
+    const p_id=req.params.p_id;
+    console.log(`DELETE Page of ${p_id} number Product`);
+    
+    const query=`DELETE FROM product WHERE p_id=${p_id}`;
+    conn.query(query,(err,result)=>{
+        if(err) throw err;
+        console.log(`삭제되었습니다. 결과 : ${result}`);
+        res.redirect('/product?page=1');
+    })
+
+})
+/*
+app.get('/test', function (req, res) {
     getDataFromDB().then(queryStringfy).catch(err=>console.log(err))
-    .then(APICall).catch(err=>console.log(err))
+    .then(data=>{
+        return Promise.all(data.map((value)=>{
+            return new Promise((resolve,reject)=>{
+                //각 value의 query로 API호출을 하여, readyState와 status가 만족되면, 해당 가격들을 리스트화하여 resolve 
+                const client_id="rfsNNjH2NfhNhhTNnPfk";
+                const client_secret="uPeOXOPI_k";
+                const url = `https://openapi.naver.com/v1/search/shop.json?query=${value.query}&sort=sim&display=1`;    
+                const xhttp=new XMLHttpRequest();
+
+                //URL(혹은 URI)를 UTF-8 인코딩하는 메서드, encodeURL를 통해 전달해야 공백, 한글로 구성된 URL을 전달해도 문제가 없음
+                xhttp.open('GET',encodeURI(url),true);
+
+                xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
+                xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
+            
+                //해당 AJAX의 결과가 null일 때 수행할 예외처리를 정의해야 함
+                xhttp.onreadystatechange=()=>{
+                    if(xhttp.readyState==4 && xhttp.status==200){
+                        const response=JSON.parse(xhttp.responseText);
+                        resolve(response);
+                        if(response.items.length==0){
+                            value.lpriceList=["null"];
+                            resolve(value);
+                        }else{  
+                            console.log(response.items);
+                            response.items.forEach((item,index,arr)=>{
+                                if(index==0){
+                                    value.lpriceList=[item.lprice];
+                                }else{
+                                    value.lpriceList.push(item.lprice);
+                                }
+                            })
+                            resolve(value);
+                        }
+                    }else{
+                        console.log(`ReadyState is ${xhttp.readyState}`);
+                        console.log(`Status is ${xhttp.status}`);
+                    }
+                } 
+                xhttp.send();
+            })
+        }));
+    })
+    .then((data)=>{
+        console.log(data[4].items);
+    })
 
     function getDataFromDB (){
         return new Promise((resolve,reject)=>{
-            const query=`SELECT p_id,p_brand,p_name,p_flavor,p_weight FROM product`; 
+            const query=`SELECT p_id,p_brand,p_name,p_flavor,p_weight FROM product LIMIT 10`; 
             conn.query(query,(err,result)=>{
                 if(err){
                     reject("Error Occured During selecting from Database");
@@ -267,50 +330,4 @@ app.get('/test', function (req, res) {
             }
         })
     }
-
-    function APICall(data){
-        return new Promise((resolve,reject)=>{
-            if(data!=null){
-                const client_id="rfsNNjH2NfhNhhTNnPfk";
-                const client_secret="uPeOXOPI_k";
-
-                //Data내의 각 item에 접근하여, 해당 query를 가지고 API를 호출, 응답이 완료되면 해당 객체에 lprice의 정보들을 배열로 저장함
-                data.forEach((item,index,arr)=>{
-                    const url = `https://openapi.naver.com/v1/search/shop.json?query=${item.query}&sort=sim&display=5`;
-                    
-                    const xhttp=new XMLHttpRequest();
-
-                    //URL(혹은 URI)를 UTF-8 인코딩하는 메서드, encodeURL를 통해 전달해야 공백, 한글로 구성된 URL을 전달해도 문제가 없음
-                    xhttp.open('GET',encodeURI(url),true);
-                    
-                    xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
-                    xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
-                
-                    //해당 AJAX의 결과가 null일 때 수행할 예외처리를 정의해야 함
-                    xhttp.onreadystatechange=()=>{
-                        if(xhttp.readyState==4 && xhttp.status==200){
-                            const response=JSON.parse(xhttp.responseText);
-                            //AJAX요청 결과로 반환되는 lPrice에 대한 배열 반복문을 정의 
-                            if(response.items.length==0){
-                                arr[index].lpriceList=["null"];
-                            }else{  
-                                response.items.forEach((resItem,resIndex,resArr)=>{
-                                    if(resIndex==0){
-                                        arr[index].lpriceList=[resItem.lprice];
-                                    }else{
-                                        arr[index].lpriceList.push(resItem.lprice);
-                                    }
-                                })
-                            }
-                        }
-                    }
-                    //여기서 문제, onreadystatechange는 비동기 방식이므로, resolve했을 때 lprice가 적용되지 않은 변수가 전달될 수 있음 
-
-                    xhttp.send();
-                })
-            }else{
-                reject("Data is NULL!!__3");
-            }
-        })
-    }
-  });
+})*/
