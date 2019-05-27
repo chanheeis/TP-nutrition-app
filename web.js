@@ -116,7 +116,7 @@ app.post('/login/check',(req,res)=>{
     console.log(`ID : ${m_id}, PW : ${m_password}`);
 
     const queryArr=[m_id,m_password]
-    const query=`SELECT m_name FROM member WHERE m_id=? AND m_password=?`;
+    const query=`SELECT m_name,m_number FROM member WHERE m_id=? AND m_password=?`;
 
     conn.query(query,queryArr,(err,results)=>{
         if(err) throw err;
@@ -126,6 +126,13 @@ app.post('/login/check',(req,res)=>{
             console.log(results);
             req.session.userName=results[0].m_name;
             req.session.loginStatus=true;
+            if(results[0].m_number<100){
+                req.session.isAdmin=true;
+                console.log("관리자입니다!");
+            }else{
+                req.session.isAdmin=false;
+                console.log("관리자가 아닙니다!");
+            }
             console.log(`로그인 성공 후 세션의 상태: ${req.session.userName},${req.session.loginStatus}`);
         }
         res.redirect('/');
@@ -134,13 +141,8 @@ app.post('/login/check',(req,res)=>{
 
 app.get('/product/upload',(req,res)=>{ 
     //관리자의 권한을 가지고 있는지 먼저 판단해야 함
-    const viewData={
-        loginInfo:{
-            loginStatus:req.session.loginStatus,
-            userName:req.session.userName
-        }
-    };
-    res.render('product_upload',{viewData:viewData});
+    const isAdmin=req.session.isAdmin
+    res.render('product_upload',{isAdmin:isAdmin});
 })
 
 app.post('/product/upload',upload.single('p_image'),(req,res)=>{
@@ -200,7 +202,8 @@ app.get('/product/:p_id',(req,res)=>{
         if(err) throw err;
             const loginInfo={
                 loginStatus:req.session.loginStatus,
-                userName:req.session.userName
+                userName:req.session.userName,
+                isAdmin:req.session.isAdmin
             }
             console.log(result);
         res.render('product_info',{viewData:result[0],loginInfo:loginInfo})
@@ -214,7 +217,8 @@ app.get('/product/:p_id/edit',(req,res)=>{
     const query=`SELECT * FROM product WHERE p_id=${queryStr}`;
     conn.query(query,(err,result)=>{
         if(err) throw err;
-        res.render('product_edit',{viewData:result[0]})
+        const isAdmin=req.session.isAdmin;
+        res.render('product_edit',{viewData:result[0],isAdmin:isAdmin})
     })
 })
 

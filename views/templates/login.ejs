@@ -9,6 +9,7 @@
 <body>
     <% if(loginInfo.loginStatus){ %>
         Hello, <%=loginInfo.userName %>!!!
+        <a href="/logout">Logout</a>
     <% }else{ %>
         <form action="/login/check" method="POST">
             ID : 
