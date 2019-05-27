@@ -123,6 +123,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_weight=req.body.p_weight;
     const p_flavor=req.body.p_flavor;
     const p_fat=req.body.p_fat;
+    const p_calorie=req.body.p_calorie;
     const p_saturated_fat=req.body.p_saturated_fat;
     const p_trans_fat=req.body.p_trans_fat;
     const p_cholesterol=req.body.p_cholesterol;
@@ -142,7 +143,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
         p_weight,p_flavor,p_fat,
         p_saturated_fat,p_trans_fat,p_cholesterol,
         p_sodium,p_corbohydrate,p_dietary_fiber,
-        p_sugar,p_protein,p_image,p_div
+        p_sugar,p_protein,p_image,p_div,p_calorie
     };
 
     conn.query(query,data,(err,result)=>{
@@ -232,9 +233,6 @@ app.get('/test', function (req, res) {
 
     getDataFromDB().then(queryStringfy).catch(err=>console.log(err))
     .then(APICall).catch(err=>console.log(err))
-    .then(data=>{
-        console.log(data);
-    });
 
     function getDataFromDB (){
         return new Promise((resolve,reject)=>{
@@ -306,6 +304,8 @@ app.get('/test', function (req, res) {
                             }
                         }
                     }
+                    //여기서 문제, onreadystatechange는 비동기 방식이므로, resolve했을 때 lprice가 적용되지 않은 변수가 전달될 수 있음 
+
                     xhttp.send();
                 })
             }else{
