@@ -5,8 +5,12 @@
     <div id="gnb">
         <ul>
             <a href="/"><li id= "green">Home</li></a>
+            <% if(loginInfo.loginStatus){ %>
+                <a href="/logout"><li>Logout</li></a>    
+            <% }else{ %>
+                <a href="/join"><li>Join</li></a>
+            <% } %>
             <a href="/product?page=1"><li>Product</li></a>
-            <a href="/join"><li>Join</li></a>
             <a href="/mypage"><li>MyPage</li></a>
             <a href="/info"><li>Info</li></a>
         </ul>

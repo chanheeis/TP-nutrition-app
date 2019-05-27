@@ -64,7 +64,6 @@ app.get('/join',(req,res)=>{
             loginStatus:req.session.loginStatus,
             userName:req.session.userName
         }
-    
     res.render('join',{loginInfo:loginInfo});
 })
 
@@ -287,6 +286,12 @@ app.get('/product/:p_id/delete',(req,res)=>{
 
 })
 
+app.get('/logout',(req,res)=>{
+    delete req.session.isAdmin;
+    delete req.session.loginStatus;
+    delete req.session.userName;
+    res.redirect('/');
+})
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
 app.get('/test', function (req, res) {
