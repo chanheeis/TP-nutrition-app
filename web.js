@@ -229,26 +229,92 @@ app.get('/product/:p_id/edit',(req,res)=>{
 })
 
 app.get('/test', function (req, res) {
-    const client_id="rfsNNjH2NfhNhhTNnPfk";
-    const client_secret="uPeOXOPI_k";
-    var url = 'https://openapi.naver.com/v1/search/shop.json?query=comment&'; // json 결과
-    
-    var xhttp=new XMLHttpRequest();
-    xhttp.open('GET',url,true);
-    
-    xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
-    xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
 
-    xhttp.onreadystatechange=function(){
-        if(xhttp.readyState===XMLHttpRequest.DONE && xhttp.status===200){
-            console.log("Wating....");
-            /*const data=JSON.parse(xhttp.responseText);
-            console.log(data.total);
-            res.send(data.total);*/
-        }else{
-            console.log(`Something Wrong!! Ready State is ${xhttp.readyState}`);
-            console.log(`Something Wrong!! Status is ${xhttp.status}`);
-        }    
+    getDataFromDB().then(queryStringfy).catch(err=>console.log(err))
+    .then(APICall).catch(err=>console.log(err))
+    .then(data=>{
+        console.log(data);
+    });
+
+    function getDataFromDB (){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT p_id,p_brand,p_name,p_flavor,p_weight FROM product`; 
+            conn.query(query,(err,result)=>{
+                if(err){
+                    reject("Error Occured During selecting from Database");
+                };
+                if(result.length==0){
+                    reject("Query Result is NULL!!");
+                }
+                resolve(result)
+            })       
+        })
+    } 
+
+    //Query결과가 있을 때만 실행됨, 해당 Promise에서 id와 query값을 가지는 객체를 배열의 갯수만큼 생성함
+    function queryStringfy(data){
+        return new Promise((resolve,reject)=>{
+            if(data!=null){
+                data.forEach((item,index,arr)=>{
+                    let brand=item.p_brand;
+                    let name=item.p_name;
+                    let flavor=item.p_flavor;
+                    let weight=item.p_weight.toString();
+
+                    arr[index].query=`${brand} ${name} ${flavor} ${weight}`;
+                })
+                resolve(data);
+            }else{
+                reject("Data is NULL!!");
+            }
+        })
     }
-    xhttp.send();
+
+    function APICall(data){
+        return new Promise((resolve,reject)=>{
+            if(data!=null){
+                const client_id="rfsNNjH2NfhNhhTNnPfk";
+                const client_secret="uPeOXOPI_k";
+
+                //Data내의 각 item에 접근하여, 해당 query를 가지고 API를 호출, 응답이 완료되면 해당 객체에 lprice의 정보들을 배열로 저장함
+                data.forEach((item,index,arr)=>{
+                    const url = `https://openapi.naver.com/v1/search/shop.json?query=${item.query}&sort=sim&display=5`;
+                    
+                    const xhttp=new XMLHttpRequest();
+
+                    //URL(혹은 URI)를 UTF-8 인코딩하는 메서드, encodeURL를 통해 전달해야 공백, 한글로 구성된 URL을 전달해도 문제가 없음
+                    xhttp.open('GET',encodeURI(url),true);
+                    
+                    xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
+                    xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
+                
+                    //해당 AJAX의 결과가 null일 때 수행할 예외처리를 정의해야 함
+                    xhttp.onreadystatechange=()=>{
+                        if(xhttp.readyState==4 && xhttp.status==200){
+                            const response=JSON.parse(xhttp.responseText);
+
+                            //AJAX요청 결과로 반환되는 lPrice에 대한 배열 반복문을 정의 
+                            if(response.items.length==0){
+                                arr[index].lpriceList=["null"];
+                            }else{  
+                                response.items.forEach((resItem,resIndex,resArr)=>{
+                                    if(resIndex==0){
+                                        arr[index].lpriceList=[resItem.lprice];
+                                    }else{
+                                        arr[index].lpriceList.push(resItem.lprice);
+                                    }
+                                })
+                            }                    
+                        }
+
+                    }
+                    xhttp.send();
+                })
+                console.log(data);
+                resolve(data);
+            }else{
+                reject("Data is NULL!!__3");
+            }
+        })
+    }
   });
