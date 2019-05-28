@@ -33,11 +33,7 @@
         <input type="number" step="0.01" name="p_weight" required value="<%= viewData.p_weight %>"> (lb) <br>
         
         맛(Flavor) :
-            없음<input type="radio" name="p_flavor" value="없음" checked>
-            딸기맛<input type="radio" name="p_flavor" value="딸기맛">
-            초코맛<input type="radio" name="p_flavor" value="초코맛">
-            바닐라맛<input type="radio" name="p_flavor" value="바닐라맛">
-            기타<input type="radio" name="p_flavor" value="기타"><br>
+        <input type="text" name="p_flavor" value="<%= viewData.p_weight %>">
         
         칼로리(Calorie) :
         <input type="number" step="0.01" name="p_calorie" min="0" required value="<%= viewData.p_calorie %>"> (g)
