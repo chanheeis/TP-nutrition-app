@@ -6,119 +6,29 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing: border-box;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
+		#wrapper{
+            width: 290px;
+            margin: 5px;
+            float:left;
+            border-radius: 10px 10px 10px 10px;
+		}
 
-        body {
-            color: #555555;
-            font-weight: bold;
-            width: 100%;
-            height: 100%;
-            cursor: default;
-        }
+		#shadow{
+			margin-bottom: 10px;
+		}
 
-        #header{
-            margin:0 auto;
-            width:100%;
-            height:60px;
-            background-color: white;
-            position: fixed;
-            margin-top:0px;
-        }
-
-        #header h1 img {
-            height: 50px; 
-        }
-
-        #header h1{
-            text-align: center;
-            padding-top:6px;
-        }
-
-        #gnb-wrapper{
-            width:100%;
-            background-color: #dddddd;
-            margin-top: 60px;
-            position: fixed;
-        }
-
-        #gnb a{
-            text-decoration: none;
-            font-weight: bold;
-            color: #4285f4;
-
-        }
-
-        #gnb ul{
-            display: block;
-            overflow: hidden;
-        }
-
-        #gnb li{
-            line-height: 42px;
-            display: inline-block;
-            width:120px; 
-            height:50px;
-            padding-top: 2px;
-            text-align: center;
-            float: left;
-        }
-
-        #gnb li:visited{
-            text-decoration: none;
-            color: #4285f4;
-        }
-
-        #gnb li:hover{
-            border-bottom:4px solid #4285f4;
-        }
-
-        #gnb li:first-child{
-            margin-left:0px;
-        }
-
-        #gnb li:last-child{
-            margin-right: 0px;
-        }
-
-        #green {
-            background-color: #4285f4;
-            color: white;
-            border-radius: 0 20px 0 0;
-        }
-
-        #content{
-            width:1304px;
-            margin:0 auto;
-            padding: 0px 50px;
-            padding-top: 150px;
-            padding-bottom: 20px;
-            overflow: hidden;
-            border-left: 2px solid #dddddd;
-            border-right: 2px solid #dddddd;
-        }
-
-        #content :hover{
+		#shadow :hover{
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         }
 
         #product{
             width: 290px;
-            margin: 5px;
-            padding: 20px 0;
-            background-color: white;
-            float:left;
-            border-radius: 10px 10px 10px 10px;
+            padding: 20px 25px;
             color: #555555
         }
 
         #product :hover{
             box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
-            color: #555555
         }
 
         #product :active{
@@ -132,7 +42,6 @@
         }
 
         .product-img{
-            margin: 0px 25px;
             padding-top: 10px;
             width: 240px;
             text-align: center;
@@ -144,27 +53,27 @@
         }
 
         .product-info{
-            margin: 0px 25px;
-            width: 240px;
-            height: 120px;
+            width: 210px;
+            height: 100px;
+			margin: 0px 15px;
             padding: 10px 0px;
-            border-radius: 10px 10px 10px 10px;
             background-color: white;
         }
 
         .product-info p{
             width: 220px;
             text-align: left;
+			font-size: 14px;
         }
 
-        .product-info span{
-            padding-left: 15px;
-        }
+		#brand{
+			margin-bottom: 5px;
+		}
 
+/*sns*/
         #sns {
             height: 50px;
             padding: 10px 15px;
-            margin: 0px 25px;
             background-color: white;
         }
 
@@ -175,18 +84,16 @@
         }
 
         #sns div img{
-            height: 30px;
+            height: 20px;
             float:left; 
             padding-right: 5px;
-
         }
 
-        /**/
+/*page*/
         #pageW{
             text-align: center;
             margin: 0px auto;
-            padding-bottom: 10px;
-            background-color: white;
+            padding: 20px 0px;
             width:1304px;
             overflow: hidden;
             border-left: 2px solid #dddddd;
@@ -194,8 +101,9 @@
         }
 
         #page{
-            margin: 0px 550px;
-            background-color: yellow;
+			height:30px;
+            margin: 20px 550px;
+			background-color: white;
         }
 
         #page div{
@@ -245,45 +153,53 @@
 </head>
 <body>
     <% include ./templates/header %>
-    <div id="content">
-        <% viewData.forEach(function(data){ %>
-        <a href="product/<%= data.p_id %>">
-            <div id="product">
-                <div class="product-img">
-                    <img src="<%= data.p_image %>">
-                </div>
-                <div class="product-info">
-                        <p><span><%= data.p_brand %></span></p>
-                        <p><span><%= data.p_name %></span></p>
-                        <p><span>53,900</span></p>
+    <div>
+        <!--content&pageW 위에 div 생성-->
+        <div id="content">
+            <% viewData.forEach(function(data){ %>
+            <div id="wrapper">
+                <div id="shadow">
+                    <a href="product/<%= data.p_id %>">
+                        <div id="product">
+                            <div class="product-img">
+                                <img src="<%= data.p_image %>">
+                            </div>
+                            <div class="product-info">
+                                    <p id="brand"><span><%= data.p_brand %></span></p>
+                                    <p><span><%= data.p_name %></span></p>
+                                    <p><span>53,900원</span></p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
                 <div id="sns">
                     <div>
-                        <img src="public/image/good.png">
+                        <a href=""><img src="public/image/good.png"></a>
                         <p>5</p>
                     </div>
                     <div>
-                        <img src="public/image/bad.png">
+                        <a href=""><img src="public/image/bad.png"></a>
                         <p>2</p>
                     </div>
                     <div>
-                        <img src="public/image/comment.png">
+                        <a href=""><img src="public/image/comment.png"></a>
                         <p>4</p>
                     </div>
                 </div>
             </div>
-        </a>
-        <% }) %>
+            <% }) %>
+        </div>
     </div>
-        <div id="pageW">
-            <div id="page">
-                <a href="/product?page=1"><div id="after"><h3>1</h3></div></a>
-                <a href="/product?page=2"><div><h3>2</h3></div></a>
-                <a href="/product?page=3"><div><h3>3</h3></div></a>
-                <a href="/product?page=4"><div><h3>4</h3></div></a>
-                <a href="/product?page=5"><div><h3>5</h3></div></a>
-            </div>
-        </div> 
+
+    <div id="pageW">
+        <div id="page">
+            <a href="/product?page=1"><div id="after"><h3>1</h3></div></a>
+            <a href="/product?page=2"><div><h3>2</h3></div></a>
+            <a href="/product?page=3"><div><h3>3</h3></div></a>
+            <a href="/product?page=4"><div><h3>4</h3></div></a>
+            <a href="/product?page=5"><div><h3>5</h3></div></a>
+        </div>
+    </div> 
     
     
         <%- include('templates/login',{loginInfo:loginInfo}) %>
