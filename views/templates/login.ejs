@@ -5,26 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        #log{
+            width: 224px;
+            background-color:white;
+            border-radius: 10px 10px 10px 10px;
+            border: 2px solid #dddddd;
+            text-align: center;
+            font-weight: bold;
+            padding: 15px 0px;
+		}
+		
+		#log-box{
+			width: 180px;
+			height: 65px;
+			margin: 0px auto;
+			background-color: white;
+		}
+
+		#log-form div{
+			text-align: right;
+			padding-right: 5px;
+		}
+
+		#log-box p{
+			margin: 5px auto;
+		}
+
+		#m_id_login{
+			width: 120px;
+			border-radius: 7px 7px 7px 7px;
+			border: 2px solid #dddddd;
+		}
+
+		#m_password_login{
+			width: 120px;
+			border-radius: 7px 7px 7px 7px;
+			border: 2px solid #dddddd;
+		}
+
+		#submit{
+			width: 170px;
+			height: 35px;
+			border: none;
+			border-radius: 7px 7px 7px 7px;
+			background: url('public/image/login.png');
+			margin-bottom: 5px;
+		}
+    </style>
 </head>
 <body>
     <% if(loginInfo.loginStatus){ %>
-        Hello, <%=loginInfo.userName %>!!!
-        <a href="/logout">Logout</a>
+        <div id="log">
+				<div id="log-box">
+					<p>Hello,<br><%=loginInfo.userName %></p>
+				</div>
+				<a href="/logout"><img src="public/image/logout.png"></a>
+        </div>
     <% }else{ %>
-        <form action="/login/check" method="POST">
-            ID : 
-                <input 
-                    type="text"
-                    name="m_id_login"
-                    id="m_id_login"><br>
-            PW : 
-                <input 
-                    type="password"
-                    name="m_password_login"
-                    id="m_password_login"><br>
-    
-            <input type="submit" value="Login">
-        </form>
+        <div id="log">
+            <form id="log-form" action="/login/check" method="POST">
+                <div id="log-box">
+                    <p>ID : 
+                        <input 
+                            type="text"
+                            name="m_id_login"
+                            id="m_id_login"></p>
+                    <p>PW : 
+                        <input 
+                            type="password"
+                            name="m_password_login"
+                            id="m_password_login"></p>
+                </div>
+                <input id="submit" type="submit" value="">
+            </form>
+        </div>
     <% }%>
 </body>
 </html>
