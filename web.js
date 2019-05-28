@@ -47,7 +47,6 @@ app.listen(8001,()=>{
     console.log("Connected to 3000 PORT!!!");
     console.log(`This App's Root is ${root}.`);
     conn.connect();
-
 })
 
 app.get('/',(req,res)=>{
@@ -176,7 +175,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 
     conn.query(query,data,(err,result)=>{
         if(err) throw err;
-        res.redirect('/product?page=1');
+        res.redirect('/product/upload');
     });
 })
 
