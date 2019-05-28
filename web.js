@@ -182,7 +182,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
     const page=req.query.page;
-    const query=`SELECT p_id,p_name,p_image,p_brand FROM product LIMIT ${page*20},20`;
+    const query=`SELECT p_id,p_name,p_image,p_brand FROM product LIMIT ${(page-1)*20},20`;
     
     conn.query(query,(err,result)=>{
         const loginInfo={
