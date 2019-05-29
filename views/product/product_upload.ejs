@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Product Page</title>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/public/css/product.css">
+    <link rel="stylesheet" type="text/css" href="/css/product_upload.css">
 </head>
 <body>
     <h2>상품 등록 페이지</h2>
@@ -65,7 +65,7 @@
         <input type="submit" value="등록">
     </form>
     <a href="/product?page=1">Prodcut Page</a>
-    <%- include('templates/login',{loginInfo:loginInfo}) %>
-    <img src="public/image/good.png">
+    
+    <%- include('../templates/login',{loginInfo:loginInfo}) %>
 </body>
 </html>

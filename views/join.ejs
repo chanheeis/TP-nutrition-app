@@ -5,69 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <style>
-        #join-title{
-			width:1200px;
-			padding-bottom: 5px;
-			border-bottom: 5px solid #4285f4;
-		}
-
-		#join-form{
-            width:1150px;
-			margin: 10px 25px;
-		}
-
-		#join-form div{
-			margin: 10px 0px;
-		}
-
-		#join-form input {
-			background-color: white;
-			border-radius: 5px 5px 5px 5px;
-			border: 2px solid #dddddd;
-		}
-
-		#join-form button{
-			width: 70px;
-			height: 22px;
-			background-color: #aaaaaa;
-			border-radius: 5px 5px 5px 5px;
-			border: none;
-			margin-left: 8px;
-			color: white;
-			font-size: 12px;
-		}
-        /*join-submit에 있던 배경색상 속성을 타입 선택자로 옮김, 불명의 원인으로 배경이 하얀색으로 지정됨*/
-        #join-form input[type="submit"]{
-			background-color: #4285f4;
-        }
-
-		#join-submit{
-			width: 130px;
-			height: 40px;
-			border-radius: 5px 5px 5px 5px;
-			border: none;
-			color: white;
-			font-size: 16px;
-			margin-top: 30px;
-		}
-
-		#m_id_result{
-            color:red;
-			font-size: 12px;
-			float: right;
-			margin-right: 860px;
-			margin-top: 5px;
-        }
-
-		#m_password_result{
-            color:red;
-			font-size: 12px;
-			float: right;
-			margin-right: 760px;
-			margin-top: 5px;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="/css/join.css">
 </head>
 <body>
     <% include ./templates/header %>
@@ -75,7 +13,6 @@
         <div>
             <!--다른 페이지의 h2태그와의 차별을 위해, join-title이라는 id값을 부여-->
             <h2 id="join-title">Sign up</h2>
-
             <!--기존에 form에 부여되지 않던 id를 join-form으로 생성-->
             <form
                 id="join-form" 
@@ -196,6 +133,6 @@
         </div>
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
-    <script src="public/js/join.js"></script>
+    <script src="/js/join.js"></script>
 </body>
 </html>

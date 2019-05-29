@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        #log{
+		#log{
             width: 224px;
             background-color:white;
             border-radius: 10px 10px 10px 10px;
@@ -14,6 +14,10 @@
             text-align: center;
             font-weight: bold;
             padding: 15px 0px;
+			top: 170px;
+			right: 40px;
+			position: fixed;
+			z-index: 5;
 		}
 		
 		#log-box{
@@ -49,7 +53,7 @@
 			height: 35px;
 			border: none;
 			border-radius: 7px 7px 7px 7px;
-			background: url('public/image/login.png');
+			background: url('/image/login.png');
 			margin-bottom: 5px;
 		}
     </style>
@@ -60,7 +64,7 @@
 				<div id="log-box">
 					<p>Hello,<br><%=loginInfo.userName %></p>
 				</div>
-				<a href="/logout"><img src="public/image/logout.png"></a>
+				<a href="/logout"><img src="/image/logout.png"></a>
         </div>
     <% }else{ %>
         <div id="log">

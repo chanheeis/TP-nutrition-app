@@ -34,7 +34,7 @@ app.set('views',path.join(root,'/views'));
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.use('/public',express.static(root+'/views/public'));
+app.use(express.static(__dirname + '/public'));
 
 //미들웨어 세션 설정 파트
 app.use(session({
@@ -146,7 +146,7 @@ app.get('/product/upload',(req,res)=>{
         loginStatus:req.session.loginStatus,
         userName:req.session.userName
     };
-    res.render('product_upload',{isAdmin:isAdmin,loginInfo:loginInfo});
+    res.render('./product/product_upload',{isAdmin:isAdmin,loginInfo:loginInfo});
 })
 
 app.post('/product/upload',upload.single('p_image'),(req,res)=>{
@@ -206,7 +206,7 @@ app.get('/product',(req,res)=>{
                 loginStatus:req.session.loginStatus,
                 userName:req.session.userName
             }
-            res.render('product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
+            res.render('./product/product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
         });
     }else{
         console.log("로그인 상태가 아닙니다. 쿼리를 시작합니다.");
@@ -223,7 +223,7 @@ app.get('/product',(req,res)=>{
                 loginStatus:req.session.loginStatus,
                 userName:req.session.userName
             }
-            res.render('product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
+            res.render('./product/product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
         });     
     }
 })
@@ -239,7 +239,7 @@ app.get('/product/:p_id',(req,res)=>{
                 isAdmin:req.session.isAdmin
             }
             console.log(result);
-        res.render('product_info',{viewData:result[0],loginInfo:loginInfo})
+        res.render('./product/product_info',{viewData:result[0],loginInfo:loginInfo})
     })
 })
 
@@ -251,7 +251,7 @@ app.get('/product/:p_id/edit',(req,res)=>{
     conn.query(query,(err,result)=>{
         if(err) throw err;
         const isAdmin=req.session.isAdmin;
-        res.render('product_edit',{viewData:result[0],isAdmin:isAdmin})
+        res.render('./product/product_edit',{viewData:result[0],isAdmin:isAdmin})
     })
 })
 
@@ -292,7 +292,7 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
         }
     
         if(req.file){
-            const p_image=`public/image/uploads/${req.file.originalname}`;    
+            const p_image=`/image/uploads/${req.file.originalname}`;    
             data.p_image=p_image;
         }
     
@@ -539,7 +539,6 @@ app.get('/unlike/:p_id',(req,res)=>{
     }
 })
 
-
 app.get('/mypage',(req,res)=>{
     /*
         마이페이지에서 구현할 기능 :
@@ -548,6 +547,8 @@ app.get('/mypage',(req,res)=>{
     */
     res.render('mypage');
 })
+
+
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
 app.get('/test', function (req, res) {
