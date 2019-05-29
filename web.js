@@ -11,7 +11,7 @@ const session=require('express-session');
 //파일 시스템 설정
 const storage=multer.diskStorage({
     destination: function(req,file,cb){
-        cb(null,`${root}/views/public/image/uploads`)
+        cb(null,`${root}/public/image/uploads`)
     },
     filename: function(req,file,cb){
         cb(null,file.originalname);
