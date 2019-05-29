@@ -34,7 +34,7 @@ app.set('views',path.join(root,'/views'));
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.use(express.static(root + '/public'));
+app.use('/public',express.static(root + '/public'));
 
 //미들웨어 세션 설정 파트
 app.use(session({
