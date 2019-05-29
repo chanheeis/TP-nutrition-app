@@ -188,20 +188,44 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
     const page=req.query.page;
-    const query=
-        `SELECT P.p_id,p_name,P.p_image,P.p_brand,
+
+    if(req.session.loginStatus){
+        console.log("로그인 상태입니다. 쿼리를 시작합니다.");
+        //session에 memberNumber가 있을 경우(즉, 로그인 상태가 True일 경우 정의되는 쿼리)
+        const query=
+        `SELECT P.p_id,P.p_name,P.p_image,P.p_brand,
+        (SELECT COUNT(*) FROM product_like PL WHERE P.p_id=PL.p_id) AS count_like,
+        (SELECT COUNT(*) FROM product_unlike PUL WHERE P.p_id=PUL.p_id) AS count_unlike,
+        (SELECT COUNT(*)>0 FROM product_like PL WHERE P.p_id=PL.p_id AND PL.m_number=${req.session.memberNumber}) AS isLike,
+        (SELECT COUNT(*)>0 FROM product_unlike PUL WHERE P.p_id=PUL.p_id AND PUL.m_number=${req.session.memberNumber}) AS isUnlike
+        FROM product P LIMIT ${(page-1)*20},20`;
+
+        conn.query(query,(err,result)=>{
+            console.log(result);
+            const loginInfo={
+                loginStatus:req.session.loginStatus,
+                userName:req.session.userName
+            }
+            res.render('product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
+        });
+    }else{
+        console.log("로그인 상태가 아닙니다. 쿼리를 시작합니다.");
+        //session에 memberNumber가 없을 경우(즉, 로그인 되어 있지 않은 경우에서 정의되는 쿼리)
+        const query=
+        `SELECT P.p_id,P.p_name,P.p_image,P.p_brand,
         (SELECT COUNT(*) FROM product_like PL WHERE P.p_id=PL.p_id) AS count_like,
         (SELECT COUNT(*) FROM product_unlike PUL WHERE P.p_id=PUL.p_id) AS count_unlike
         FROM product P LIMIT ${(page-1)*20},20`;
-    
-    conn.query(query,(err,result)=>{
-        console.log(result);
-        const loginInfo={
-            loginStatus:req.session.loginStatus,
-            userName:req.session.userName
-        }
-        res.render('product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
-    });
+
+        conn.query(query,(err,result)=>{
+            console.log(result);
+            const loginInfo={
+                loginStatus:req.session.loginStatus,
+                userName:req.session.userName
+            }
+            res.render('product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
+        });     
+    }
 })
 
 //해당 상품을 클릭하면, 해당 상품의 정보를 상세하게 볼 수 있는 페이지

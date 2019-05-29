@@ -87,12 +87,13 @@
             height: 20px;
             float:left; 
             padding-right: 5px;
+            opacity: 0.3;
         }
 
-        #sns img :hover{
+        #sns div img:hover{
             opacity: 1.0;
         }
-
+        
 /*page*/
         #pageW{
             text-align: center;
@@ -179,7 +180,11 @@
                 <div id="sns">
                     <div>
                         <a href="javascript:void(0);" onclick="handleLike(this,'<%- data.p_id %>')">
-                            <img src="public/image/good.png">
+                            <% if(data.isLike==true){ %>
+                                <img style="opacity: 1.0;" src="public/image/good.png">
+                            <% }else{ %>
+                                <img src="public/image/good.png">
+                            <% } %>
                         </a>
                         <!--페이지가 초기 출력될 때, DB에서 받아온 값을 전달해야 함-->
                         <p><%= data.count_like %></p>
@@ -187,11 +192,16 @@
                     </div>
                     <div>
                         <a href="javascript:void(0);" onclick="handleLike(this,'<%- data.p_id %>')">
-                            <img src="public/image/bad.png"></a>
+                            <% if(data.isUnlike==true){ %>
+                                <img style="opacity: 1.0;" src="public/image/bad.png">
+                            <% }else{ %>
+                                <img src="public/image/bad.png">
+                            <% } %>
+                        </a>
                         <p><%= data.count_unlike %></p>
                     </div>
                     <div>
-                        <a href=""><img src="public/image/comment.png"></a>
+                        <a href="javascript:void(0);"><img id="sns-img-comment"src="public/image/comment.png"></a>
                         <p>4</p>
                     </div>
                 </div>
