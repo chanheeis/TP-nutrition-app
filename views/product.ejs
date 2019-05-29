@@ -89,6 +89,10 @@
             padding-right: 5px;
         }
 
+        #sns img :hover{
+            opacity: 1.0;
+        }
+
 /*page*/
         #pageW{
             text-align: center;
@@ -198,17 +202,26 @@
 
     <div id="pageW">
         <div id="page">
-            <a href="/product?page=1"><div id="after"><h3>1</h3></div></a>
-            <a href="/product?page=2"><div><h3>2</h3></div></a>
-            <a href="/product?page=3"><div><h3>3</h3></div></a>
-            <a href="/product?page=4"><div><h3>4</h3></div></a>
-            <a href="/product?page=5"><div><h3>5</h3></div></a>
+            <a id="1" href="/product?page=1"><div><h3>1</h3></div></a>
+            <a id="2" href="/product?page=2"><div><h3>2</h3></div></a>
+            <a id="3" href="/product?page=3"><div><h3>3</h3></div></a>
+            <a id="4" href="/product?page=4"><div><h3>4</h3></div></a>
+            <a id="5" href="/product?page=5"><div><h3>5</h3></div></a>
         </div>
     </div> 
     <%- include('templates/login',{loginInfo:loginInfo}) %>
 
     <script>
+        const pageNum="<%- pageNum %>";
+        const activePage=document.getElementById(pageNum);
+        
+        activePage.childNodes[0].id="after"
+
         function handleLike(element,data){
+            if(!'<%- loginInfo.loginStatus %>'){
+                alert("로그인이 필요한 서비스입니다!");
+                return;
+            }
             const p_id=data;
             const xhttp=new XMLHttpRequest();
             const url=`/like/${p_id}`;
@@ -248,7 +261,6 @@
                     }else if(response.isUnlike===true){
                         element.children[0].style.opacity=1.0;
                     }
-
                     //Parent Node의 두번째 자식인 p태그 내에 Parameter로 넘어온 COUNT값을 넣음
                     element.parentNode.children[1].innerHTML=response.COUNT;
                 }
