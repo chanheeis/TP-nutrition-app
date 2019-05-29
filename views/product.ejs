@@ -174,13 +174,16 @@
                 </div>
                 <div id="sns">
                     <div>
-                        <a href="#" onclick="handleLike('<%- data.p_id %>')">
+                        <a href="#" onclick="handleLike(this,'<%- data.p_id %>')">
                             <img src="public/image/good.png">
                         </a>
+                        <!--페이지가 초기 출력될 때, DB에서 받아온 값을 전달해야 함-->
                         <p>5</p>
+                        
                     </div>
                     <div>
-                        <a href=""><img src="public/image/bad.png"></a>
+                        <a href="#" onclick="handleLike(this,'<%- data.p_id %>')">
+                            <img src="public/image/bad.png"></a>
                         <p>2</p>
                     </div>
                     <div>
@@ -203,8 +206,9 @@
         </div>
     </div> 
     <%- include('templates/login',{loginInfo:loginInfo}) %>
+
     <script>
-        function handleLike(data){
+        function handleLike(element,data){
             const p_id=data;
             const xhttp=new XMLHttpRequest();
             const url=`/like/${p_id}`;
@@ -212,11 +216,44 @@
             xhttp.open('GET',url,true);
             xhttp.onreadystatechange=()=>{
                 if(xhttp.readyState===4&&xhttp.status===200){
-                    console.log(xhttp.responseText);
+                    const response=JSON.parse(xhttp.responseText);
+                    console.log(response);
+
+                    if(response.isLike===false){
+                        element.children[0].style.opacity=0.3;
+                    }else if(response.isLike===true){
+                        element.children[0].style.opacity=1.0;
+                    }
+
+                    //Parent Node의 두번째 자식인 p태그 내에 Parameter로 넘어온 COUNT값을 넣음
+                    element.parentNode.children[1].innerHTML=response.COUNT;
                 }
             }
             xhttp.send();
+        }
 
+        function handleUnlike(element,data){
+            const p_id=data;
+            const xhttp=new XMLHttpRequest();
+            const url=`/unlike/${p_id}`;
+
+            xhttp.open('GET',url,true);
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.readyState===4&&xhttp.status===200){
+                    const response=JSON.parse(xhttp.responseText);
+                    console.log(response);
+
+                    if(response.isUnLike===false){
+                        element.children[0].style.opacity=0.3;
+                    }else if(response.isUnlike===true){
+                        element.children[0].style.opacity=1.0;
+                    }
+
+                    //Parent Node의 두번째 자식인 p태그 내에 Parameter로 넘어온 COUNT값을 넣음
+                    element.parentNode.children[1].innerHTML=response.COUNT;
+                }
+            }
+            xhttp.send();
         }
     </script>
 </body>

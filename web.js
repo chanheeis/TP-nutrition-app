@@ -124,7 +124,7 @@ app.post('/login/check',(req,res)=>{
             console.log(results);
             req.session.userName=results[0].m_name;
             req.session.loginStatus=true;
-            req.session.userNumber=results[0].m_number;
+            req.session.memberNumber=results[0].m_number;
 
             if(results[0].m_number<100){
                 req.session.isAdmin=true;
@@ -142,7 +142,11 @@ app.post('/login/check',(req,res)=>{
 app.get('/product/upload',(req,res)=>{ 
     //관리자의 권한을 가지고 있는지 먼저 판단해야 함
     const isAdmin=req.session.isAdmin
-    res.render('product_upload',{isAdmin:isAdmin});
+    const loginInfo={
+        loginStatus:req.session.loginStatus,
+        userName:req.session.userName
+    };
+    res.render('product_upload',{isAdmin:isAdmin,loginInfo:loginInfo});
 })
 
 app.post('/product/upload',upload.single('p_image'),(req,res)=>{
@@ -294,18 +298,216 @@ app.get('/logout',(req,res)=>{
     res.redirect('/');
 })
 
+//사용자가 좋아요 버튼을 클릭하였을 때, 해당 처리를 AJAX로 수행하는 라우트
 app.get('/like/:p_id',(req,res)=>{
     const productNumber=req.params.p_id;
-    console.log(productNumber);
+    if(req.session.loginStatus){
+        const memberNumber=req.session.memberNumber;
+        console.log(memberNumber);
+        
+        //User Number가 있을 때만 DB쿼리를 실행
+        queryLike(memberNumber,productNumber)
+        .then(controlPromise).catch(err=>console.log("Error Occured During Control Promise"+err))
+        .then(calcUnlike).catch(err=>console.log("Error Occured during last Promise!!"));
 
-    if(req.session.userNumber){
-        const userNumber=req.session.userNumber;
-        console.log(userNumber);    
     }else{
         console.log("Login Please!!");
     }
-    
-    
+
+    function queryLike(memberNumber,productNumber){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT like_id FROM product_like WHERE m_number=${memberNumber} AND p_id=${productNumber}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+
+                console.log(`Promise_1 result : ${result.length}`);
+
+                //result의 길이와 함께, product의 ID도 함께 전달해야 함
+                const data={
+                    resultLength:result.length,
+                    productNumber,
+                    memberNumber
+                };
+                resolve(data);
+            })
+        })
+    }
+
+    function controlPromise(data){
+        return new Promise((resolve,reject)=>{
+            console.log(`ControlPromise Data : ${data.resultLength},${data.productNumber},${data.memberNumber}`);
+            if(data.resultLength==0){
+                console.log("Like Table을 추가합니다.");
+
+                //insertLike Promise정의
+                const query=`INSERT INTO product_like SET ?`;
+                const queryData={
+                    m_number:data.memberNumber,
+                    p_id:data.productNumber
+                };
+
+                conn.query(query,queryData,(err,result)=>{
+                    if(err) throw err;
+                    console.log("Like 추가가 성공적으로 완료되었습니다.")
+
+                    const data_2={
+                        productNumber:data.productNumber,
+                        isLike:true
+                    };
+                    resolve(data_2);
+                })
+                //insert query이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
+            
+            }else if(data.resultLength==1){
+                console.log("Like Table을 삭제합니다.");
+
+                //deleteLike Promise 정의
+                const query=`DELETE FROM product_like WHERE m_number=${data.memberNumber} AND p_id=${data.productNumber}`;
+                
+                conn.query(query,(err,result)=>{
+                    if(err) throw err;
+                    console.log("Like 삭제가 성공적으로 완료되었습니다.");
+                    
+                    const data_2={
+                        productNumber:data.productNumber,
+                        isLike:false
+                    };
+                    resolve(data_2);
+                })
+
+                //delete query 이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
+            }else{
+                console.log("잘못된 처리")
+                //에러처리하기
+                reject("Control Promise 처리 중 오류가 발생하였습니다.");
+            }
+        })
+    }
+
+    //좋아요의 갯수와 상품의 좋아요 여부를 판단하는 로직
+    function calcUnlike(data){
+        return new Promise((resolve,reject)=>{
+            const productNumber=data.productNumber;
+            const isLike=data.isLike;
+
+            console.log(`Promise Calc => ${productNumber},${isLike}`);
+            const query=`SELECT count(*) COUNT FROM product_like WHERE p_id=${productNumber}`;
+            conn.query(query,(err,result)=>{
+                console.log(`Result[0] : ${result[0].COUNT}`);
+                const data_3={
+                    isLike,
+                    COUNT:result[0].COUNT
+                };
+                res.json(data_3);
+            })
+        })
+    }
+})
+
+//싫어요를 눌렀을 때 작동하는 쿼리
+app.get('/unlike/:p_id',(req,res)=>{
+    const productNumber=req.params.p_id;
+    if(req.session.loginStatus){
+        const memberNumber=req.session.memberNumber;
+        console.log(memberNumber);
+        
+        //User Number가 있을 때만 DB쿼리를 실행
+        queryLike(memberNumber,productNumber)
+        .then(controlPromise).catch(err=>console.log("Error Occured During Control Promise"+err))
+        .then(calcUnlike).catch(err=>console.log("Error Occured during last Promise!!"));
+
+    }else{
+        console.log("Login Please!!");
+    }
+
+    function queryLike(memberNumber,productNumber){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT unlike_id FROM product_unlike WHERE m_number=${memberNumber} AND p_id=${productNumber}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+
+                console.log(`Promise_1 result : ${result.length}`);
+
+                //result의 길이와 함께, product의 ID도 함께 전달해야 함
+                const data={
+                    resultLength:result.length,
+                    productNumber,
+                    memberNumber
+                };
+                resolve(data);
+            })
+        })
+    }
+
+    function controlPromise(data){
+        return new Promise((resolve,reject)=>{
+            console.log(`ControlPromise Data : ${data.resultLength},${data.productNumber},${data.memberNumber}`);
+            if(data.resultLength==0){
+                console.log("Unlike Table을 추가합니다.");
+
+                //insertLike Promise정의
+                const query=`INSERT INTO product_unlike SET ?`;
+                const queryData={
+                    m_number:data.memberNumber,
+                    p_id:data.productNumber
+                };
+
+                conn.query(query,queryData,(err,result)=>{
+                    if(err) throw err;
+                    console.log("Unlike 추가가 성공적으로 완료되었습니다.")
+
+                    const data_2={
+                        productNumber:data.productNumber,
+                        isUnlike:true
+                    };
+                    resolve(data_2);
+                })
+                //insert query이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
+            
+            }else if(data.resultLength==1){
+                console.log("Unlike Table을 삭제합니다.");
+
+                //deleteLike Promise 정의
+                const query=`DELETE FROM product_unlike WHERE m_number=${data.memberNumber} AND p_id=${data.productNumber}`;
+                
+                conn.query(query,(err,result)=>{
+                    if(err) throw err;
+                    console.log("Unlike 삭제가 성공적으로 완료되었습니다.");
+                    
+                    const data_2={
+                        productNumber:data.productNumber,
+                        isUnlike:false
+                    };
+                    resolve(data_2);
+                })
+
+                //delete query 이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
+            }else{
+                console.log("잘못된 처리")
+                //에러처리하기
+                reject("Control Promise 처리 중 오류가 발생하였습니다.");
+            }
+        })
+    }
+
+    //좋아요의 갯수와 상품의 좋아요 여부를 판단하는 로직
+    function calcUnlike(data){
+        return new Promise((resolve,reject)=>{
+            const productNumber=data.productNumber;
+            const isUnlike=data.isUnlike;
+
+            console.log(`Promise Calc => ${productNumber},${isUnlike}`);
+            const query=`SELECT count(*) COUNT FROM product_unlike WHERE p_id=${productNumber}`;
+            conn.query(query,(err,result)=>{
+                console.log(`Result[0] : ${result[0].COUNT}`);
+                const data_3={
+                    isUnlike,
+                    COUNT:result[0].COUNT
+                };
+                res.json(data_3);
+            })
+        })
+    }
 })
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
