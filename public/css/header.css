@@ -1,10 +1,3 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing: border-box;
-    font-family: 'Noto Sans KR', sans-serif;
-    text-decoration: none;
-}
 
 body {
     color: #555555;
@@ -13,6 +6,15 @@ body {
     height: 100%;
     cursor: default;
 }
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+    text-decoration: none;
+}
+
 /*header*/
 #header{
     margin:0 auto;
