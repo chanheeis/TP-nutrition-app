@@ -124,6 +124,8 @@ app.post('/login/check',(req,res)=>{
             console.log(results);
             req.session.userName=results[0].m_name;
             req.session.loginStatus=true;
+            req.session.userNumber=results[0].m_number;
+
             if(results[0].m_number<100){
                 req.session.isAdmin=true;
                 console.log("관리자입니다!");
@@ -290,6 +292,20 @@ app.get('/logout',(req,res)=>{
     delete req.session.loginStatus;
     delete req.session.userName;
     res.redirect('/');
+})
+
+app.get('/like/:p_id',(req,res)=>{
+    const productNumber=req.params.p_id;
+    console.log(productNumber);
+
+    if(req.session.userNumber){
+        const userNumber=req.session.userNumber;
+        console.log(userNumber);    
+    }else{
+        console.log("Login Please!!");
+    }
+    
+    
 })
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*

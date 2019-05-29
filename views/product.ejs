@@ -174,7 +174,9 @@
                 </div>
                 <div id="sns">
                     <div>
-                        <a href=""><img src="public/image/good.png"></a>
+                        <a href="#" onclick="handleLike('<%- data.p_id %>')">
+                            <img src="public/image/good.png">
+                        </a>
                         <p>5</p>
                     </div>
                     <div>
@@ -200,8 +202,22 @@
             <a href="/product?page=5"><div><h3>5</h3></div></a>
         </div>
     </div> 
-    
-    
-        <%- include('templates/login',{loginInfo:loginInfo}) %>
+    <%- include('templates/login',{loginInfo:loginInfo}) %>
+    <script>
+        function handleLike(data){
+            const p_id=data;
+            const xhttp=new XMLHttpRequest();
+            const url=`/like/${p_id}`;
+
+            xhttp.open('GET',url,true);
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.readyState===4&&xhttp.status===200){
+                    console.log(xhttp.responseText);
+                }
+            }
+            xhttp.send();
+
+        }
+    </script>
 </body>
 </html>
