@@ -110,9 +110,6 @@ app.post('/login/check',(req,res)=>{
     const m_id=req.body.m_id_login;
     const m_password=req.body.m_password_login;
 
-    //login.ejs에서 넘어온 ID와 PW의 정보를 출력함
-    console.log(`ID : ${m_id}, PW : ${m_password}`);
-
     const queryArr=[m_id,m_password]
     const query=`SELECT m_name,m_number FROM member WHERE m_id=? AND m_password=?`;
 
@@ -121,19 +118,15 @@ app.post('/login/check',(req,res)=>{
 
         //로그인에 성공하여, 해당 로그인 정보를 세션에 저장하기 위해 해당 라우터로 분기함
         if(results[0]){
-            console.log(results);
             req.session.userName=results[0].m_name;
             req.session.loginStatus=true;
             req.session.memberNumber=results[0].m_number;
 
             if(results[0].m_number<100){
                 req.session.isAdmin=true;
-                console.log("관리자입니다!");
             }else{
                 req.session.isAdmin=false;
-                console.log("관리자가 아닙니다!");
             }
-            console.log(`로그인 성공 후 세션의 상태: ${req.session.userName},${req.session.loginStatus}`);
         }
         res.redirect('/');
     })
@@ -190,7 +183,6 @@ app.get('/product',(req,res)=>{
     const page=req.query.page;
 
     if(req.session.loginStatus){
-        console.log("로그인 상태입니다. 쿼리를 시작합니다.");
         //session에 memberNumber가 있을 경우(즉, 로그인 상태가 True일 경우 정의되는 쿼리)
         const query=
         `SELECT P.p_id,P.p_name,P.p_image,P.p_brand,
@@ -201,7 +193,6 @@ app.get('/product',(req,res)=>{
         FROM product P LIMIT ${(page-1)*20},20`;
 
         conn.query(query,(err,result)=>{
-            console.log(result);
             const loginInfo={
                 loginStatus:req.session.loginStatus,
                 userName:req.session.userName
@@ -209,7 +200,6 @@ app.get('/product',(req,res)=>{
             res.render('./product/product',{viewData:result,loginInfo:loginInfo,pageNum:page});    
         });
     }else{
-        console.log("로그인 상태가 아닙니다. 쿼리를 시작합니다.");
         //session에 memberNumber가 없을 경우(즉, 로그인 되어 있지 않은 경우에서 정의되는 쿼리)
         const query=
         `SELECT P.p_id,P.p_name,P.p_image,P.p_brand,
@@ -218,7 +208,6 @@ app.get('/product',(req,res)=>{
         FROM product P LIMIT ${(page-1)*20},20`;
 
         conn.query(query,(err,result)=>{
-            console.log(result);
             const loginInfo={
                 loginStatus:req.session.loginStatus,
                 userName:req.session.userName
@@ -238,7 +227,6 @@ app.get('/product/:p_id',(req,res)=>{
                 userName:req.session.userName,
                 isAdmin:req.session.isAdmin
             }
-            console.log(result);
         res.render('./product/product_info',{viewData:result[0],loginInfo:loginInfo})
     })
 })
@@ -258,7 +246,6 @@ app.get('/product/:p_id/edit',(req,res)=>{
 app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
     const submitType=req.body.submitType;
     const p_id=req.params.p_id;
-    console.log(submitType);
     
     //삭제하기 버튼으로 해당 페이지에 접근했을 때 수행
     if(submitType==="삭제하기"){
@@ -298,7 +285,6 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
     
         conn.query(query,data,(err,result)=>{
             if(err) throw err;
-            console.log(result);
             res.redirect('/product?page=1');
         });
     }else{
@@ -309,12 +295,9 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
 //해당 상품을 삭제하는 페이지이므로, 반드시 관리자의 권한을 가지고 있는 사용자만이 접근할 수 있어야 함
 app.get('/product/:p_id/delete',(req,res)=>{
     const p_id=req.params.p_id;
-    console.log(`DELETE Page of ${p_id} number Product`);
-    
     const query=`DELETE FROM product WHERE p_id=${p_id}`;
     conn.query(query,(err,result)=>{
         if(err) throw err;
-        console.log(`삭제되었습니다. 결과 : ${result}`);
         res.redirect('/product?page=1');
     })
 
@@ -332,15 +315,12 @@ app.get('/like/:p_id',(req,res)=>{
     const productNumber=req.params.p_id;
     if(req.session.loginStatus){
         const memberNumber=req.session.memberNumber;
-        console.log(memberNumber);
         
         //User Number가 있을 때만 DB쿼리를 실행
         queryLike(memberNumber,productNumber)
         .then(controlPromise).catch(err=>console.log("Error Occured During Control Promise"+err))
         .then(calcUnlike).catch(err=>console.log("Error Occured during last Promise!!"));
 
-    }else{
-        console.log("Login Please!!");
     }
 
     function queryLike(memberNumber,productNumber){
@@ -348,8 +328,6 @@ app.get('/like/:p_id',(req,res)=>{
             const query=`SELECT like_id FROM product_like WHERE m_number=${memberNumber} AND p_id=${productNumber}`;
             conn.query(query,(err,result)=>{
                 if(err) throw err;
-
-                console.log(`Promise_1 result : ${result.length}`);
 
                 //result의 길이와 함께, product의 ID도 함께 전달해야 함
                 const data={
@@ -364,9 +342,7 @@ app.get('/like/:p_id',(req,res)=>{
 
     function controlPromise(data){
         return new Promise((resolve,reject)=>{
-            console.log(`ControlPromise Data : ${data.resultLength},${data.productNumber},${data.memberNumber}`);
             if(data.resultLength==0){
-                console.log("Like Table을 추가합니다.");
 
                 //insertLike Promise정의
                 const query=`INSERT INTO product_like SET ?`;
@@ -377,8 +353,6 @@ app.get('/like/:p_id',(req,res)=>{
 
                 conn.query(query,queryData,(err,result)=>{
                     if(err) throw err;
-                    console.log("Like 추가가 성공적으로 완료되었습니다.")
-
                     const data_2={
                         productNumber:data.productNumber,
                         isLike:true
@@ -388,15 +362,11 @@ app.get('/like/:p_id',(req,res)=>{
                 //insert query이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
             
             }else if(data.resultLength==1){
-                console.log("Like Table을 삭제합니다.");
-
                 //deleteLike Promise 정의
                 const query=`DELETE FROM product_like WHERE m_number=${data.memberNumber} AND p_id=${data.productNumber}`;
                 
                 conn.query(query,(err,result)=>{
                     if(err) throw err;
-                    console.log("Like 삭제가 성공적으로 완료되었습니다.");
-                    
                     const data_2={
                         productNumber:data.productNumber,
                         isLike:false
@@ -406,7 +376,6 @@ app.get('/like/:p_id',(req,res)=>{
 
                 //delete query 이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
             }else{
-                console.log("잘못된 처리")
                 //에러처리하기
                 reject("Control Promise 처리 중 오류가 발생하였습니다.");
             }
@@ -419,10 +388,8 @@ app.get('/like/:p_id',(req,res)=>{
             const productNumber=data.productNumber;
             const isLike=data.isLike;
 
-            console.log(`Promise Calc => ${productNumber},${isLike}`);
             const query=`SELECT count(*) COUNT FROM product_like WHERE p_id=${productNumber}`;
             conn.query(query,(err,result)=>{
-                console.log(`Result[0] : ${result[0].COUNT}`);
                 const data_3={
                     isLike,
                     COUNT:result[0].COUNT
@@ -455,8 +422,6 @@ app.get('/unlike/:p_id',(req,res)=>{
             conn.query(query,(err,result)=>{
                 if(err) throw err;
 
-                console.log(`Promise_1 result : ${result.length}`);
-
                 //result의 길이와 함께, product의 ID도 함께 전달해야 함
                 const data={
                     resultLength:result.length,
@@ -472,7 +437,6 @@ app.get('/unlike/:p_id',(req,res)=>{
         return new Promise((resolve,reject)=>{
             console.log(`ControlPromise Data : ${data.resultLength},${data.productNumber},${data.memberNumber}`);
             if(data.resultLength==0){
-                console.log("Unlike Table을 추가합니다.");
 
                 //insertLike Promise정의
                 const query=`INSERT INTO product_unlike SET ?`;
@@ -483,8 +447,6 @@ app.get('/unlike/:p_id',(req,res)=>{
 
                 conn.query(query,queryData,(err,result)=>{
                     if(err) throw err;
-                    console.log("Unlike 추가가 성공적으로 완료되었습니다.")
-
                     const data_2={
                         productNumber:data.productNumber,
                         isUnlike:true
@@ -494,15 +456,11 @@ app.get('/unlike/:p_id',(req,res)=>{
                 //insert query이후 다시 AJAX 응답 전송하기 (Promise 방식으로 전달해야 함)
             
             }else if(data.resultLength==1){
-                console.log("Unlike Table을 삭제합니다.");
-
                 //deleteLike Promise 정의
                 const query=`DELETE FROM product_unlike WHERE m_number=${data.memberNumber} AND p_id=${data.productNumber}`;
                 
                 conn.query(query,(err,result)=>{
                     if(err) throw err;
-                    console.log("Unlike 삭제가 성공적으로 완료되었습니다.");
-                    
                     const data_2={
                         productNumber:data.productNumber,
                         isUnlike:false
@@ -525,10 +483,8 @@ app.get('/unlike/:p_id',(req,res)=>{
             const productNumber=data.productNumber;
             const isUnlike=data.isUnlike;
 
-            console.log(`Promise Calc => ${productNumber},${isUnlike}`);
             const query=`SELECT count(*) COUNT FROM product_unlike WHERE p_id=${productNumber}`;
             conn.query(query,(err,result)=>{
-                console.log(`Result[0] : ${result[0].COUNT}`);
                 const data_3={
                     isUnlike,
                     COUNT:result[0].COUNT
