@@ -1,3 +1,10 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+    text-decoration: none;
+}
 
 body {
     color: #555555;
@@ -7,15 +14,6 @@ body {
     cursor: default;
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing: border-box;
-    font-family: 'Noto Sans KR', sans-serif;
-    text-decoration: none;
-}
-
-/*header*/
 #header{
     margin:0 auto;
     padding-top: 10px;
@@ -39,7 +37,6 @@ body {
     padding-right:15px;
 }
 
-/*gnb*/
 #gnb-wrapper{
     width:100%;
     background-color: #F2F2F2;
@@ -96,7 +93,7 @@ body {
     color: white;
     border-radius: 0 20px 0 0;
 }
-/*content*/
+
 #content{
     width:1300px;
     margin:0px auto;
