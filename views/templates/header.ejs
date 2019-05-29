@@ -95,7 +95,7 @@
             margin-right: 0px;
         }
 
-        #gnb #after {
+        #gnb #currentMenu {
             background-color: #4285f4;
             color: white;
             border-radius: 0 20px 0 0;
@@ -122,7 +122,7 @@
     <div id= "gnb-wrapper">
         <div id="gnb">
             <ul>
-                <a href="/"><li id= "after">Home</li></a>
+                <a href="/"><li id= "currentMenu">Home</li></a>
                 <% if(loginInfo.loginStatus){ %>
                     <a href="/logout"><li>Logout</li></a>    
                 <% }else{ %>

@@ -188,9 +188,14 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
     const page=req.query.page;
-    const query=`SELECT p_id,p_name,p_image,p_brand FROM product LIMIT ${(page-1)*20},20`;
+    const query=
+        `SELECT P.p_id,p_name,P.p_image,P.p_brand,
+        (SELECT COUNT(*) FROM product_like PL WHERE P.p_id=PL.p_id) AS count_like,
+        (SELECT COUNT(*) FROM product_unlike PUL WHERE P.p_id=PUL.p_id) AS count_unlike
+        FROM product P LIMIT ${(page-1)*20},20`;
     
     conn.query(query,(err,result)=>{
+        console.log(result);
         const loginInfo={
             loginStatus:req.session.loginStatus,
             userName:req.session.userName
@@ -510,6 +515,15 @@ app.get('/unlike/:p_id',(req,res)=>{
     }
 })
 
+
+app.get('/mypage',(req,res)=>{
+    /*
+        마이페이지에서 구현할 기능 :
+        1) 입력했던 회원정보를 보여주고, 해당 정보를 수정할 수 있도록 구성
+        2) 내가 좋아요했던 상품이 무엇인지 보여주고(이름, 브랜드), 해당 상품 페이지로 이동할 수 있도록 a태그 링크로 연결
+    */
+    res.render('mypage');
+})
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
 app.get('/test', function (req, res) {

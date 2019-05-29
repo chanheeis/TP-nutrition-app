@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>MyPage</h1>
+    <!--
+        회원 이름, 비밀번호, 생년월일, 성별, 이메일, ID
+
+        1) 임의로 수정할 수 있는 내용 : 
+        회원 이름, 성별, 생년월일, 이메일
+
+        2) 조건에 맞추어 수정할 수 있는 내용 :
+        회원 비밀번호
+
+        3) 수정할 수 없는 내용 :
+        회원 ID
+    -->
+
+    아이디
+    <input type="text" name="m_id"><br>
+    
+    패스워드<br>
+    <!--첫번째 필드에 회원의 비밀번호를 서버로부터 받아 채움, button을 눌러 비밀번호를 변경할 시 active시키며, 비밀번호 확인을 위한 새로운 input 필드와 
+    확인을 위한 텍스트 필드를 Element에 추가함-->
+    <input type="password" name="m_password">
+    <button>비밀번호 변경하기</button><br>
+
+    이름<br>
+    <input type="text" name="m_name"><br>
+    
+    성별<br>
+    <input type="radio" name="m_sex" value="M" checked>
+    <input type="radio" name="m_sex" value="W"><br>
+     
+    생년월일<br>
+    <!--리스트로 구성-->
+
+    이메일<br>
+    <input type="text" name="e_mail_1">@<input type="text" name="e_mail_2">
+</body>
+</html>

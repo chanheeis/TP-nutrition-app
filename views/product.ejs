@@ -182,13 +182,13 @@
                             <img src="public/image/good.png">
                         </a>
                         <!--페이지가 초기 출력될 때, DB에서 받아온 값을 전달해야 함-->
-                        <p>5</p>
+                        <p><%= data.count_like %></p>
                         
                     </div>
                     <div>
                         <a href="javascript:void(0);" onclick="handleLike(this,'<%- data.p_id %>')">
                             <img src="public/image/bad.png"></a>
-                        <p>2</p>
+                        <p><%= data.count_unlike %></p>
                     </div>
                     <div>
                         <a href=""><img src="public/image/comment.png"></a>
