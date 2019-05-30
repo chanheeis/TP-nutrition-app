@@ -10,22 +10,9 @@
 <body>
     <% include ./templates/header %>
     <div id="content">
-        <!--
-            회원 이름, 비밀번호, 생년월일, 성별, 이메일, ID
 
-            1) 임의로 수정할 수 있는 내용 : 
-            회원 이름, 성별, 생년월일, 이메일
-
-            2) 조건에 맞추어 수정할 수 있는 내용 :
-            회원 비밀번호
-
-            3) 수정할 수 없는 내용 :
-            회원 ID
-         -->
         <div>
-            <!--다른 페이지의 h2태그와의 차별을 위해, join-title이라는 id값을 부여-->
             <h2 id="mypage-title">My Page</h2>
-            <!--기존에 form에 부여되지 않던 id를 join-form으로 생성-->
             <form
                 id="mypage-form" 
                 action="/mypage/edit" 
@@ -48,7 +35,6 @@
                 <div>
                     <p>ID</p>
                     <p id="user-info">
-                        <!--Id값은 고유한 값, 임의로 변경할 수 없음-->
                         <%= memberInfo.m_id %>
                     </p>
                 </div>
@@ -243,7 +229,6 @@
                         </p>
                     </div>
 
-                    <!--구분을 위해 join이라는 id값을 join-submit으로 변경-->
                     <input 
                         id="join-submit" 
                         type="submit" 
@@ -251,7 +236,7 @@
             </form>
             <div id="like-info">
                     <div id="you-like">
-                        <img id="goodimg" src="good.png">You like
+                        <img id="goodimg" src="/image/good.png">You like
                     </div>
                     <div id="shadow">
             	    <% likeInfo.forEach(function(data){ %>
