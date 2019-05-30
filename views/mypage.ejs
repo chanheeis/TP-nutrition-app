@@ -33,27 +33,23 @@
                 onsubmit="return submitCheck()">
                 <div>
                     <p>Name</p> 
-                    <p>
+                    <p id="user-info">
                         <input 
                             type="text" 
                             name="m_name" 
                             maxlength="20" 
                             size="20"
                             required
+                            value="<%= memberInfo.m_name %>"
                             >
                     </p>
                 </div>
 
                 <div>
                     <p>ID</p>
-                    <p>
-                        <input 
-                            type="text" 
-                            name="m_id" 
-                            size="10"
-                            id="m_id"
-                            disabled
-                        >
+                    <p id="user-info">
+                        <!--Id값은 고유한 값, 임의로 변경할 수 없음-->
+                        <%= memberInfo.m_id %>
                     </p>
                 </div>
 
@@ -87,7 +83,7 @@
                 </div>
                     <div>
                         <p>BIRTH</p>
-                        <p>
+                        <p id="user-info">
                             <select name="m_birth_y" required>
                                 <option value="2018">2018</option>
                                 <option value="2017">2017</option>
@@ -224,7 +220,7 @@
                     </div>
     
                     <div>
-                        <p>SEX</p>
+                        <p id="user-info">SEX</p>
                         <p>
                             <input type="radio" name="m_sex" value="M" checked>Male &nbsp;
                             <input type="radio" name="m_sex" value="F">Female
@@ -233,14 +229,16 @@
     
                     <div>
                         <p>EMail</p>
-                        <p>
+                        <p id="user-info">
                             <input 
                                 type="text" 
                                 name="m_email_1" 
+                                value="<%= memberInfo.m_email_1 %>"
                                 required>@
                             <input 
                                 type="text" 
                                 name="m_email_2" 
+                                value="<%= memberInfo.m_email_2 %>"
                                 required>
                         </p>
                     </div>
@@ -249,30 +247,28 @@
                     <input 
                         id="join-submit" 
                         type="submit" 
-                        value="JOIN"><br>
+                        value="Edit"><br>
             </form>
+            <div id="like-info">
+                    <div id="you-like">
+                        <img id="goodimg" src="good.png">You like
+                    </div>
+                    <div id="shadow">
+            	    <% likeInfo.forEach(function(data){ %>
+                        <a href=" "><div id="like-product">
+                            <div id="likeproduct-img">
+                                <img src="<%= data.p_image %>">	
+                                </div>
+                            <div id="likeproduct-info">
+                                <p><%= data.p_brand %></p>
+                                <p><%= data.p_name %></p>
+                            </div>
+                        </div></a>
+                	<% }) %>
+                    </div>
+                </div>
         </div>
     </div>
-
-    <h2>User Info</h2>
-    <p><%= memberInfo.m_number %></p>
-    <p><%= memberInfo.m_name %></p>
-    <p><%= memberInfo.m_password %></p>
-    <p><%= memberInfo.m_birth %></p>
-    <p><%= memberInfo.m_sex %></p>
-    <p><%= memberInfo.m_id %></p>
-    <p><%= memberInfo.m_email_1 %>@<%= memberInfo.m_email_2 %></p>
-    
-    <h2>Like Info</h2>
-    <% likeInfo.forEach(function(data){ %>
-        <div>
-            <p><%= data.p_id %></p>
-            <p><%= data.p_name %></p>
-            <p><%= data.p_brand %></p>
-            <p><%= data.p_image %></p>
-        </div>
-    <% }) %>
-
     <%- include('templates/login',{loginInfo:loginInfo}) %>
     <script src="/js/join.js"></script>
 </body>

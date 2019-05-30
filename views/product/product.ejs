@@ -79,7 +79,7 @@
         const activePage=document.getElementById(pageNum);
         
         activePage.childNodes[0].id="after"
-
+        
         function handleLike(element,data){
             if(!'<%- loginInfo.loginStatus %>'){
                 alert("로그인이 필요한 서비스입니다!");
@@ -122,13 +122,16 @@
             xhttp.onreadystatechange=()=>{
                 if(xhttp.readyState===4&&xhttp.status===200){
                     const response=JSON.parse(xhttp.responseText);
-                    console.log(response);
-
-                    if(response.isUnLike===false){
+                    
+                    //현재 이쪽 분기의 실행이 안되고 있음
+                    if(response.isUnlike===false){
+                        console.log("isUnlike = false!")
                         element.children[0].style.opacity=0.3;
                     }else if(response.isUnlike===true){
+                        console.log("isUnlike = true!")
                         element.children[0].style.opacity=1.0;
                     }
+
                     //Parent Node의 두번째 자식인 p태그 내에 Parameter로 넘어온 COUNT값을 넣음
                     element.parentNode.children[1].innerHTML=response.COUNT;
                 }

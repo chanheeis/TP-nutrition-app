@@ -483,6 +483,7 @@ app.get('/unlike/:p_id',(req,res)=>{
         return new Promise((resolve,reject)=>{
             const productNumber=data.productNumber;
             const isUnlike=data.isUnlike;
+            console.log(`isUnlike : ${isUnlike}`)
 
             const query=`SELECT count(*) COUNT FROM product_unlike WHERE p_id=${productNumber}`;
             conn.query(query,(err,result)=>{
@@ -490,6 +491,7 @@ app.get('/unlike/:p_id',(req,res)=>{
                     isUnlike,
                     COUNT:result[0].COUNT
                 };
+                console.log(data_3);
                 res.json(data_3);
             })
         })

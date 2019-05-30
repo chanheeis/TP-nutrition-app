@@ -1,3 +1,4 @@
+
 #mypage-title{
     width:1200px;
     padding-bottom: 5px;
@@ -5,8 +6,9 @@
 }
 
 #mypage-form{
-    width:1150px;
+    width:500px;
     margin: 10px 25px;
+	float:left;
 }
 
 #mypage-form div{
@@ -48,6 +50,82 @@
     color:red;
     font-size: 12px;
     float: right;
-    margin-right: 760px;
+    margin-right: 110px;
     margin-top: 5px;
+}
+
+#user-info{
+	font-size: 14px;
+}
+
+/*좋아요 상품*/
+#like-info{
+    width:600px;
+    margin: 10px 25px;
+	float:left;
+}
+
+/*소제목*/
+#you-like{
+    width:600px;
+	margin: 10px 0px;
+	color: #4285f4;
+	font-size: 20px;
+}
+
+#goodimg{
+	width: 30px;
+	margin-right: 10px;
+	float:left;
+}
+
+/*상품 표시*/
+#like-product{
+    width:590px;
+	height: 80px;
+	margin: 10px 5px;
+	color: #555555;
+	border-radius: 7px 7px 7px 7px;
+}
+
+#likeproduct-img{
+	width:110px;
+	float: left;
+	text-align: center;
+}
+
+#likeproduct-img img{
+	height:80px;
+}
+
+#likeproduct-info{
+	width: 480px;
+	height:80px;
+	padding-left: 10px;
+	float: left;
+}
+
+#likeproduct-info p{
+	margin: 10px auto;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+/*상품 그림자*/
+#shadow :hover{
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+#like-product :hover{
+	box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
+}
+
+#like-product :active{
+	color: #555555;
+	text-decoration: none;
+}
+
+#like-product :visited{
+	color: #555555;
+	text-decoration: none;
 }
