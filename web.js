@@ -72,11 +72,12 @@ app.post('/join',(req,res)=>{
     const m_password=req.body.m_password;
     const m_birth=req.body.m_birth_y+req.body.m_birth_m+req.body.m_birth_d;
     const m_sex=req.body.m_sex;
-    const m_email=req.body.m_email_1 + req.body.m_email_2; 
-
+    const m_email_1=req.body.m_email_1;
+    const m_email_2=req.body.m_email_2;
+     
     const query='INSERT INTO member SET ?';
     const data={
-        m_name,m_password,m_birth,m_sex,m_email,m_id
+        m_name,m_password,m_birth,m_sex,m_id,m_email_1,m_email_2
     };
     
     conn.query(query,data,(err,result)=>{
@@ -161,7 +162,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_div=req.body.p_div;
 
     //product의 이미지를 file 전송 시스템으로 업로드하는 변수
-    const p_image=`public/image/uploads/${req.file.originalname}`;
+    const p_image=`/image/uploads/${req.file.originalname}`;
     
     const query=`INSERT INTO product SET ?`;
     const data={
@@ -496,12 +497,52 @@ app.get('/unlike/:p_id',(req,res)=>{
 })
 
 app.get('/mypage',(req,res)=>{
-    /*
-        마이페이지에서 구현할 기능 :
-        1) 입력했던 회원정보를 보여주고, 해당 정보를 수정할 수 있도록 구성
-        2) 내가 좋아요했던 상품이 무엇인지 보여주고(이름, 브랜드), 해당 상품 페이지로 이동할 수 있도록 a태그 링크로 연결
-    */
-    res.render('mypage');
+    //로그인 한 상태이면 실행하는 분기
+    if(req.session.loginStatus){
+        const memberNumber=req.session.memberNumber;
+        console.log(`User Number : ${memberNumber}`);
+
+        queryMemberInfo(memberNumber).then(queryLikeTable).catch(err=>console.log(`Error Occured During Promise_1 ${err}`));
+
+    }else{
+        //로그인 한 상태가 아니라면 "로그인 후 이용 바랍니다" 경고창 띄운 후 홈으로 redirect하기
+        console.log("로그인 후 이용 바랍니다.")
+        res.redirect('/');
+    }
+    
+    function queryMemberInfo(memberNumber){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT * FROM member WHERE m_number=${memberNumber}`
+            conn.query(query,(err,result)=>{
+                if(err) throw err
+                resolve(result[0]); 
+            });
+        })
+    }
+
+    function queryLikeTable(data){
+        return new Promise((resolve,reject)=>{
+            const query=
+            `
+                SELECT p_name,p_brand,p_image,p_id FROM product
+                WHERE p_id IN (SELECT p_id FROM product_like WHERE m_number=${data.m_number})
+                LIMIT 0,5;
+            `;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+
+                const loginInfo={
+                    loginStatus:req.session.loginStatus,
+                    userName:req.session.userName
+                }
+                console.log(`Member Data : ${data}`);
+                console.log(`login Info : ${loginInfo}`);
+                console.log(`Like Info : ${result}`);
+
+                res.render('mypage',{loginInfo:loginInfo,memberInfo:data,likeInfo:result});
+            })
+        })
+    }
 })
 
 
