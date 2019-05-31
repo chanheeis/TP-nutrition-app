@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
-    <style>
-
-    </style>
 </head>
-<body>
+<body onload="initial()">
     <% include ./templates/header %>
     <div id="content">
         <form action="/recommend" method="POST">
@@ -23,5 +20,11 @@
         </form>
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
+    <script>
+        function initial(){
+            const currentMenu=document.getElementById("menu_home");
+            currentMenu.id="currentMenu";
+        }
+    </script>
 </body>
 </html>

@@ -502,14 +502,7 @@ app.get('/mypage',(req,res)=>{
     //로그인 한 상태이면 실행하는 분기
     if(req.session.loginStatus){
         const memberNumber=req.session.memberNumber;
-        console.log(`User Number : ${memberNumber}`);
-
         queryMemberInfo(memberNumber).then(queryLikeTable).catch(err=>console.log(`Error Occured During Promise_1 ${err}`));
-
-    }else{
-        //로그인 한 상태가 아니라면 "로그인 후 이용 바랍니다" 경고창 띄운 후 홈으로 redirect하기
-        console.log("로그인 후 이용 바랍니다.")
-        res.redirect('/');
     }
     
     function queryMemberInfo(memberNumber){

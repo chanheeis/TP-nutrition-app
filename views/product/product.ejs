@@ -7,7 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="/css/product.css">
 </head>
-<body onresize="loginSize()" onload="initialSize()">
+<body onresize="loginSize()" onload="initial()">
     <% include ../templates/header %>
     <div>
         <!--content&pageW 위에 div 생성-->
@@ -23,7 +23,6 @@
                             <div class="product-info">
                                     <p id="brand"><span><%= data.p_brand %></span></p>
                                     <p><span><%= data.p_name %></span></p>
-                                    <p><span>53,900원</span></p>
                             </div>
                         </div>
                     </a>
@@ -80,11 +79,14 @@
     <%- include('../templates/login',{loginInfo:loginInfo}) %>
 
     <script>
-        function initialSize(){
+        //초기 페이지가 로드될 때 수행할 작업들을 정의
+        function initial(){
             if(window.innerWidth<1520){
                 const loginBox=document.getElementById("log");
                 loginBox.style.display="none";
             }
+            const currentMenu=document.getElementById("menu_product");
+            currentMenu.id="currentMenu";
         }
         //innerWidth가 1521px 부터 가리기 시작함
         function loginSize(){

@@ -15,15 +15,19 @@
     <div id= "gnb-wrapper">
         <div id="gnb">
             <ul>
-                <a href="/"><li id= "currentMenu">Home</li></a>
+                
+                <a href="/"><li id="menu_home">Home</li></a>
                 <% if(loginInfo.loginStatus){ %>
-                    <a href="/logout"><li>Logout</li></a>    
+                <a href="/logout"><li id="menu_logout">Logout</li></a>    
                 <% }else{ %>
-                    <a href="/join"><li>Join</li></a>
+                <a href="/join"><li id="menu_join">Join</li></a>
                 <% } %>
-                <a href="/product?page=1"><li>Product</li></a>
-                <a href="/mypage"><li>MyPage</li></a>
-                <a href="/info"><li>Info</li></a>
+                <a href="/product?page=1"><li id="menu_product">Product</li></a>
+                <% if(loginInfo.loginStatus){%>
+                <a href="/mypage"><li id="menu_mypage">MyPage</li></a>
+                <%}%>
+                <a href="/info"><li id="menu_info">Info</li></a>
+            
             </ul>
         </div>
     </div>

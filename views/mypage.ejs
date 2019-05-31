@@ -7,10 +7,9 @@
     <title>My Page</title>
     <link rel="stylesheet" type="text/css" href="/css/mypage.css">
 </head>
-<body>
+<body onload="initial()">
     <% include ./templates/header %>
     <div id="content">
-
         <div>
             <h2 id="mypage-title">My Page</h2>
             <form
@@ -256,5 +255,16 @@
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
     <script src="/js/join.js"></script>
+    <script>
+        function initial(){
+            if("<%- loginInfo.loginStatus %>"){
+                console.log("Logined!");
+            }else{
+                console.log("Login Required!");
+            }
+            const currentMenu=document.getElementById("menu_mypage");
+            currentMenu.id="currentMenu";
+        }
+    </script>
 </body>
 </html>

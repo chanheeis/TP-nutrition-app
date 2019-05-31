@@ -7,7 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="/css/join.css">
 </head>
-<body>
+<body onload="initial()">
     <% include ./templates/header %>
     <div id="content">
         <div>
@@ -270,5 +270,11 @@
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
     <script src="/js/join.js"></script>
+    <script>
+        function initial(){
+            const currentMenu=document.getElementById("menu_join");
+            currentMenu.id="currentMenu";
+        }
+    </script>
 </body>
 </html>
