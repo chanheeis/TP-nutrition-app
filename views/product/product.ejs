@@ -7,7 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" type="text/css" href="/css/product.css">
 </head>
-<body>
+<body onresize="loginSize()" onload="initialSize()">
     <% include ../templates/header %>
     <div>
         <!--content&pageW 위에 div 생성-->
@@ -80,6 +80,23 @@
     <%- include('../templates/login',{loginInfo:loginInfo}) %>
 
     <script>
+        function initialSize(){
+            if(window.innerWidth<1520){
+                const loginBox=document.getElementById("log");
+                loginBox.style.display="none";
+            }
+        }
+        //innerWidth가 1521px 부터 가리기 시작함
+        function loginSize(){
+            if(window.innerWidth<1520){
+                const loginBox=document.getElementById("log");
+                loginBox.style.display="none";
+            }else{
+                const loginBox=document.getElementById("log");
+                loginBox.style.display="block";
+            }
+        }
+
         const pageNum="<%- pageNum %>";
         const activePage=document.getElementById(pageNum);
         
