@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/ingredient" method="POST">
+        
+        <p>성분 이름</p><input type="text" name="ing_name" autocomplete="off" required> <br>
+        
+        <p>다른 이름 :</p>
+        <button type="button" onclick="handleButtonClick()">성분 추가</button>
+        <div id="ano_name"> 
+            <input type="text" name="ano_name" autocomplete="off"><br>
+        </div>
+
+        <p>유해 성분 종류</p>
+        FDA 경고 <input type="radio" value="FDA 경고" name="ing_type">
+        DEA 경고 <input type="radio" value="DEA 경고" name="ing_type">
+        ODSS 경고 <input type="radio" value="ODSS 경고" name="ing_type">
+        Consumer Report 경고 <input type="radio" value="Consumer Report 경고" name="ing_type">
+        설탕 성분 함유 <input type="radio" value="설탕 성분 함유" name="ing_type"><br>
+
+        <input type="submit" value="제출">
+    </form>
+    <script>
+        function handleButtonClick(){
+            const ano_name_input=document.createElement("INPUT");
+            ano_name_input.type="text";
+            ano_name_input.name="ano_name";
+            ano_name_input.autocomplete="off";
+
+            const ano_name_br=document.createElement("BR");
+
+            const ano_name_div=document.getElementById("ano_name");
+            ano_name_div.appendChild(ano_name_input);
+            ano_name_div.appendChild(ano_name_br);
+            console.log(ano_name_input.properties);
+        }
+    </script>
+</body>
+</html>

@@ -91,15 +91,15 @@
     text-align: center;
     margin: 0px auto;
     padding: 20px 0px;
-    width:1304px;
+    width:1300px;
     overflow: hidden;
-    border-left: 2px solid #dddddd;
-    border-right: 2px solid #dddddd;
+
 }
 
 #page{
     height:30px;
-    margin: 20px 550px;
+    width:400px;
+    margin: 20px auto;
     background-color: white;
 }
 

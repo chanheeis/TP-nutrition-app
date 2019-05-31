@@ -547,6 +547,83 @@ app.get('/mypage',(req,res)=>{
     }
 })
 
+app.get('/ingredient',(req,res)=>{
+    res.render('ingredient');
+})
+
+app.post('/ingredient',(req,res)=>{
+    const ing_name=req.body.ing_name;
+    const ano_name=req.body.ano_name;
+    const ing_type=req.body.ing_type;
+    
+    console.log(ano_name);
+    console.log(ano_name.length);
+    console.log(typeof ano_name);
+    console.log(typeof ano_name=='object');
+    //이 부분의 Promise는 정상 작동
+    //typeof ano_name=='object'일 때 동작할 Promise 분기
+    if(typeof ano_name=='object'){
+        insertIng(ing_name,ing_type,ano_name)
+        .then(data=>{
+            console.log(`Data from Promise_1 : ${data}`);
+            return Promise.all(data.ano_name_list.map(ano_name=>{
+                return new Promise((resolve,reject)=>{
+                    const query=`INSERT INTO anotherName SET ?`;
+                    const query_data={ano_name,ing_name:data.ing_name}
+                    conn.query(query,query_data,(err,result)=>{
+                        if(err) throw err;
+                        resolve(result);
+                    })
+                })
+            }))
+        }).then(()=>{
+            console.log("DONE!!");
+            res.redirect('/ingredient');
+        }).catch(err=>{
+            console.log(`Error Occured during Promise_2! ${err}`);
+        })
+    }else{
+        //이쪽 분기에서도 null값인지를 확인해야 함 (string.length>0?)으로 판단
+        insertIng(ing_name,ing_type,ano_name)
+        .then(data=>{
+            console.log(`Date from Promise_1 : ${data}`);
+            return new Promise((resolve,reject)=>{
+                const query=`INSERT INTO anotherName SET ?`;
+                const query_data={
+                    ano_name:data.ano_name_list,
+                    ing_name:data.ing_name}
+                console.log(data.ano_name_list);
+                console.log(data.ing_name);
+
+                conn.query(query,query_data,(err,result)=>{
+                    if(err) throw err;
+                    resolve(result);
+                })
+            })
+        }).then(()=>{
+            console.log("DONE!!");
+            res.redirect('/ingredient');
+        }).catch(err=>{
+            console.log(`Error Occured during Promise_2! ${err}`);
+        })
+    }
+    
+    
+    //첫번째 Query_Ingredient를 입력하는 Promise
+    function insertIng(ing_name,ing_type,ano_name_list){
+        return new Promise((resolve,reject)=>{  
+            const query_ing="INSERT INTO ingredient SET ?";
+            const query_data={
+                ing_name,
+                ing_type
+            };
+            conn.query(query_ing,query_data,(err,result)=>{
+                if(err) throw err;
+                resolve({ing_name,ano_name_list});
+            })
+        })
+    }
+})
 
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
