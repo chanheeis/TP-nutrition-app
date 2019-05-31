@@ -257,11 +257,6 @@
     <script src="/js/join.js"></script>
     <script>
         function initial(){
-            if("<%- loginInfo.loginStatus %>"){
-                console.log("Logined!");
-            }else{
-                console.log("Login Required!");
-            }
             const currentMenu=document.getElementById("menu_mypage");
             currentMenu.id="currentMenu";
         }
