@@ -8,13 +8,13 @@
 #product-insert{
     margin-left:20px; margin-top:20px;
     padding:15px;
-    height:800px;
+    height:auto;
     overflow: hidden;
 }
 
 #input_section_1{
   width:700px;
-  height: 800px;
+  height: auto;
   border-right: 2px solid #ebebeb;
   float: left;
   padding:15px;
@@ -23,7 +23,7 @@
 #input_section_2{
   padding:15px;
   float: left;
-  height:800px;
+  height:auto;
 }
 
 #product-insert input{

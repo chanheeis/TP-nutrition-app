@@ -5,19 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
+    <style>
+        #main-img{
+            width: 800px;
+            height: 400px;
+            margin:0px auto;
+		}
+
+		#textimg{
+			width: 800px;
+			height: 400px;
+			position: absolute;
+			top: 110px;
+			margin: 0px 5px;
+		}
+
+		#black{
+			width: 800px;
+			height: 400px;
+			background-color: rgba(0, 0, 0, 0.5);
+			position: absolute;
+			top: 70px;
+			margin: 0px 5px;
+		}
+
+		#XD-wrapper{
+			width: 1200px;
+		}
+
+		#XD{
+			width: 590px;
+			height: 120px;
+			margin: 10px 5px;
+			float:left;
+			background-color: yellow;
+		}
+
+/*슬라이드쇼*/
+		.mySlides {display: none;}
+
+		.slideshow-container {
+			top: 0px;
+			left: 0px;
+			height: 100%;
+		}
+
+		.slideshow-container img{
+			width: 1190px;
+			height: 600px;
+			overflow: hidden;
+		}
+
+		/* 사진 전환 효과 */
+		.fade {
+		  -webkit-animation-name: fade;
+		  -webkit-animation-duration: 1.5s;
+		  animation-name: fade;
+		  animation-duration: 1.5s;
+		}
+
+		@-webkit-keyframes fade {
+		  from {opacity: .4} 
+		  to {opacity: 1}
+		}
+
+		@keyframes fade {
+		  from {opacity: .4} 
+		  to {opacity: 1}
+		}
+    </style>
 </head>
 <body onload="initial()">
     <% include ./templates/header %>
     <div id="content">
-        <form action="/recommend" method="POST">
-            <h1>User Input Page</h1>
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="text">
-            <input type="submit">
-        </form>
+        <div id="main-img">
+            <div class="slideshow-container">
+                <div class="mySlides fade">
+                    <img src="image/01.jpg">
+                </div>
+                <div class="mySlides fade">
+                    <img src="image/02.jpg">
+                </div>
+                <div class="mySlides fade">
+                    <img src="image/03.jpg">
+                </div>
+                <div class="mySlides fade">
+                    <img src="image/04.jpg">
+                </div>
+                <div class="mySlides fade">
+                    <img src="image/05.jpg">
+                </div>
+            </div>
+        </div>
+
+        <div id="black">&nbsp;</div>
+        <img id="textimg" src="image/textimg.png">
+        <div id="XD-wrapper">
+            <div id="XD">
+            </div>
+            <div id="XD">
+            </div>
+        </div>
+
+        <div>
+            <p>앓고 계시는 신장 질환이 있으신가요?</p>
+            <input type="radio" name="res_1" value="T">
+            <input type="radio" name="res_1" value="F">
+        </div>
+        <button type="button">응답</button>
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
     <script>
@@ -25,6 +120,22 @@
             const currentMenu=document.getElementById("menu_home");
             currentMenu.id="currentMenu";
         }
+
+        var slideIndex = 0;
+		showSlides();
+
+		function showSlides() {
+		  var i;
+		  var slides = document.getElementsByClassName("mySlides");
+		  for (i = 0; i < slides.length; i++) {
+			slides[i].style.display = "none";  
+		  }
+		  slideIndex++;
+		  if (slideIndex > slides.length) {slideIndex = 1}    
+		  slides[slideIndex-1].style.display = "block";  
+		  setTimeout(showSlides, 2000);
+        }
+        
     </script>
 </body>
 </html>
