@@ -161,7 +161,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_dietary_fiber=req.body.p_dietary_fiber;
     const p_sugar=req.body.p_sugar;
     const p_protein=req.body.p_protein;
-    const p_div=req.body.p_div;
     const p_image=`/image/uploads/${req.file.originalname}`;
 
     const ingredient=req.body.ingredient;
@@ -171,7 +170,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
         p_flavor,p_fat,p_calorie,
         p_saturated_fat,p_trans_fat,p_cholesterol,
         p_sodium,p_corbohydrate,p_dietary_fiber,
-        p_sugar,p_protein,p_div,p_image
+        p_sugar,p_protein,p_image
     };
 
     mappingIng(ingredient,data).catch(err=>console.log(`Error Occured During Promise_1!! ${err}`))
@@ -241,7 +240,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
                 p_dietary_fiber:data[0].data.p_dietary_fiber,
                 p_sugar:data[0].data.p_sugar,
                 p_protein:data[0].data.p_protein,
-                p_div:data[0].data.p_div,
                 p_image:data[0].data.p_image
             }
             const ingredient=data.map((item)=>{
@@ -280,25 +278,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
             })
         }))
     }
-    
-    
-    //product의 이미지를 file 전송 시스템으로 업로드하는 변수
-    //
-    
-    /*
-    const query=`INSERT INTO product SET ?`;
-    const data={
-        p_name,p_brand,p_desc,
-        p_weight,p_flavor,p_fat,
-        p_saturated_fat,p_trans_fat,p_cholesterol,
-        p_sodium,p_corbohydrate,p_dietary_fiber,
-        p_sugar,p_protein,p_image,p_div,p_calorie
-    };
-
-    conn.query(query,data,(err,result)=>{
-        if(err) throw err;
-        res.redirect('/product/upload');
-    });*/
 })
 
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
@@ -390,7 +369,6 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
         const p_dietary_fiber=req.body.p_dietary_fiber;
         const p_sugar=req.body.p_sugar;
         const p_protein=req.body.p_protein;
-        const p_div=req.body.p_div;
     
         const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
         let data={
@@ -398,7 +376,7 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
             p_weight,p_flavor,p_fat,
             p_saturated_fat,p_trans_fat,p_cholesterol,
             p_sodium,p_corbohydrate,p_dietary_fiber,
-            p_sugar,p_protein,p_div,p_calorie   
+            p_sugar,p_protein,p_calorie   
         }
     
         if(req.file){
