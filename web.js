@@ -70,14 +70,16 @@ app.post('/join',(req,res)=>{
     const m_name=req.body.m_name;
     const m_id=req.body.m_id;
     const m_password=req.body.m_password;
-    const m_birth=req.body.m_birth_y+req.body.m_birth_m+req.body.m_birth_d;
+    const m_birth_y=req.body.m_birth_y
+    const m_birth_m=req.body.m_birth_m;
+    const m_birth_d=req.body.m_birth_d;
     const m_sex=req.body.m_sex;
     const m_email_1=req.body.m_email_1;
     const m_email_2=req.body.m_email_2;
      
     const query='INSERT INTO member SET ?';
     const data={
-        m_name,m_password,m_birth,m_sex,m_id,m_email_1,m_email_2
+        m_name,m_password,m_sex,m_id,m_email_1,m_email_2,m_birth_y,m_birth_m,m_birth_d
     };
     
     conn.query(query,data,(err,result)=>{
@@ -144,9 +146,9 @@ app.get('/product/upload',(req,res)=>{
 })
 
 app.post('/product/upload',upload.single('p_image'),(req,res)=>{
+    
     const p_name=req.body.p_name;
     const p_brand=req.body.p_brand;
-    const p_desc=req.body.p_desc;
     const p_weight=req.body.p_weight;
     const p_flavor=req.body.p_flavor;
     const p_fat=req.body.p_fat;
@@ -160,10 +162,130 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     const p_sugar=req.body.p_sugar;
     const p_protein=req.body.p_protein;
     const p_div=req.body.p_div;
-
-    //product의 이미지를 file 전송 시스템으로 업로드하는 변수
     const p_image=`/image/uploads/${req.file.originalname}`;
+
+    const ingredient=req.body.ingredient;
+
+    const data={
+        p_name,p_brand,p_weight,
+        p_flavor,p_fat,p_calorie,
+        p_saturated_fat,p_trans_fat,p_cholesterol,
+        p_sodium,p_corbohydrate,p_dietary_fiber,
+        p_sugar,p_protein,p_div,p_image
+    };
+
+    mappingIng(ingredient,data).catch(err=>console.log(`Error Occured During Promise_1!! ${err}`))
+    .then(insertProduct).catch(err=>console.log(`Error Occured During Promise_2!! ${err}`))
+    .then(insertIngredient).catch(err=>console.log(`Error Occured During Promise_3!! ${err}`))
+    .then(()=>{
+        res.redirect('/product/upload');
+    })
+
+    function mappingIng(list,data){
+        return Promise.all(list.map(item=>{
+            return new Promise((resolve,reject)=>{
+                //해당 데이터가 이미 성분 테이블에 존재하는 데이터인지를 판단
+                const passData={
+                    ingredient:item,
+                    data
+                };
+
+                const query=`
+                    SELECT * FROM (
+                        SELECT ing_name FROM ingredient 
+                        UNION
+                        SELECT ano_name AS ing_name FROM anotherName
+                    ) ING WHERE ing_name='${item}'
+                `;
+
+                conn.query(query,(err,result)=>{
+                    if(err) throw err;
+                    //Data의 값이 0이거나 0보다 큰 경우로 분기해야 함, 아래는 해당 값이 테이블이 이미 존재할 때 INSERT 명령을 Skip
+                    if(result[0]!=null){
+                        resolve(passData);
+                    }else{
+                        //해당 값이 없을 경우, INSERT명령을 실행해야 하며, 이를 비동기적으로 처리하기 위하여 Promise내에 하나의 Promise를 더 정의
+                        const query_2=`
+                            INSERT INTO ingredient SET ?
+                        `;
+                        const query_2_data={ing_name:item,ing_type:null}
+                        conn.query(query_2,query_2_data,(err,result_2)=>{
+                            if(err) throw err;
+                            resolve(passData);
+                        })
+                    }
+                })
+            })
+        }))
+    }
+
+    function insertProduct(data){
+        return new Promise((resolve,reject)=>{
+            const query=`
+                INSERT INTO product SET ?
+            `;
+
+            console.log(`Data in Promise_2 : ${data[0]}`);
+            const queryData={
+                p_name:data[0].data.p_name,
+                p_brand:data[0].data.p_brand,
+                p_weight:data[0].data.p_weight,
+                p_flavor:data[0].data.p_flavor,
+                p_fat:data[0].data.p_fat,
+                p_calorie:data[0].data.p_calorie,
+                p_saturated_fat:data[0].data.p_saturated_fat,
+                p_trans_fat:data[0].data.p_trans_fat,
+                p_cholesterol:data[0].data.p_cholesterol,
+                p_sodium:data[0].data.p_sodium,
+                p_corbohydrate:data[0].data.p_corbohydrate,
+                p_dietary_fiber:data[0].data.p_dietary_fiber,
+                p_sugar:data[0].data.p_sugar,
+                p_protein:data[0].data.p_protein,
+                p_div:data[0].data.p_div,
+                p_image:data[0].data.p_image
+            }
+            const ingredient=data.map((item)=>{
+                console.log(item);
+                console.log(item.ingredient);
+                return item.ingredient;
+            });
+            console.log(ingredient);
+
+            conn.query(query,queryData,(err,result)=>{
+                if(err) throw err;
+                const passData={
+                    ingredient,
+                    p_id:result.insertId
+                };
+                resolve(passData);
+            })
+        })
+    }
+
+    function insertIngredient(data){
+        return Promise.all(data.ingredient.map(item=>{
+            return new Promise((resolve,reject)=>{
+                console.log(item);
+                const query=`
+                    INSERT INTO product_ingredient SET ?
+                `;
+                const queryData={
+                    p_id:data.p_id,
+                    ing_name:item
+                };
+                conn.query(query,queryData,(err,result)=>{
+                    if(err) throw err;
+                    resolve();
+                })
+            })
+        }))
+    }
     
+    
+    //product의 이미지를 file 전송 시스템으로 업로드하는 변수
+    //
+    
+    /*
     const query=`INSERT INTO product SET ?`;
     const data={
         p_name,p_brand,p_desc,
@@ -176,7 +298,7 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
     conn.query(query,data,(err,result)=>{
         if(err) throw err;
         res.redirect('/product/upload');
-    });
+    });*/
 })
 
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
@@ -618,6 +740,37 @@ app.post('/ingredient',(req,res)=>{
     }
 })
 
+app.get('/product/upload/ingredient',(req,res)=>{
+
+    queryIngData().then(mapData).catch(err=>console.log("Error Occured in Promise_1 : "+err))
+    .then(data=>res.json(data)).catch(err=>console.log("Error Occured in Promise_2 "+err));
+
+    function queryIngData(){
+        return new Promise((resolve,reject)=>{
+            const query=
+            `
+                SELECT ing_name FROM ingredient
+                UNION
+                SELECT ano_name AS ing_name FROM anotherName
+            `;
+
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                resolve(result);
+            })
+        })
+    }
+
+    function mapData(data){
+        return new Promise((resolve,reject)=>{
+            let arr=[];
+            data.map((data)=>{
+                arr.push(data.ing_name);
+            })
+            resolve(arr);        
+        })
+    }
+})
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
 app.get('/test', function (req, res) {

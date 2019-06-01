@@ -10,62 +10,214 @@
 </head>
 <body>
     <h2>상품 등록 페이지</h2>
-    <form action="/product/upload" method="POST" id="product-insert" enctype="multipart/form-data">
-        Name :
-        <input type="text" name="p_name" required>
-        Brand :
-        <input type="text" name="p_brand" required><br>
+    <form autocomplete="off" action="/product/upload" method="POST" id="product-insert" enctype="multipart/form-data">
+        <div id="input_section_1">
+            Name :
+            <input type="text" name="p_name" >
+            Brand :
+            <input type="text" name="p_brand" ><br>
 
-        구분 :
-        WPI <input type="radio" name="p_div" value="WPI" checked>
-        WPC <input type="radio" name="p_div" value="WPC">
-        WPH <input type="radio" name="p_div" value="WPH">
-        Complex <input type="radio" name="p_div" value="Complex"><br>
+            구분 :
+            WPI <input type="radio" name="p_div" value="WPI" checked>
+            WPC <input type="radio" name="p_div" value="WPC">
+            WPH <input type="radio" name="p_div" value="WPH">
+            Complex <input type="radio" name="p_div" value="Complex"><br>
 
-        <textarea name="p_desc" placeholder="설명을 입력하세요." required></textarea>
-        <br>
+            <input id="file_upload" type="file" name="p_image" accept=".png, .jpg"><br>
+            
 
-        <input id="file_upload" type="file" name="p_image" accept=".png, .jpg"><br>
-        
+            중량(Weight) :
+            <input type="number" step="0.01" name="p_weight" > (lb) <br>
+            
+            맛(Flavor) :
+            <input type="text" name="p_flavor"><br>
+            
+            칼로리(Calorie) :
+            <input type="number" step="0.01" name="p_calorie" min="0" > (g)
 
-        중량(Weight) :
-        <input type="number" step="0.01" name="p_weight" required> (lb) <br>
-        
-        맛(Flavor) :
-        <input type="text" name="p_flavor"><br>
-        
-        칼로리(Calorie) :
-        <input type="number" step="0.01" name="p_calorie" min="0" required> (g)
+            <hr>
+            지방(Fat) :
+            <input type="number" step="0.01" name="p_fat" min="0" > (g) <br>
+                포화지방(Saturated Fat) : 
+                <input type="number" step="0.01" name="p_saturated_fat" min="0" > (g) <br>
+                트랜스지방(Trans Fat) :
+                <input type="number" step="0.01" name="p_trans_fat" min="0" > (g) <br>
+            <hr>
 
-        <hr>
-        지방(Fat) :
-        <input type="number" step="0.01" name="p_fat" min="0" required> (g) <br>
-            포화지방(Saturated Fat) : 
-            <input type="number" step="0.01" name="p_saturated_fat" min="0" required> (g) <br>
-            트랜스지방(Trans Fat) :
-            <input type="number" step="0.01" name="p_trans_fat" min="0" required> (g) <br>
-        <hr>
+            콜레스테롤(Cholesterol) :
+            <input type="number" step="0.01" name="p_cholesterol" min="0" > (mg) <br>
+            나트륨(Sodium) :
+            <input type="number" step="0.01" name="p_sodium" min="0" > (mg) <br>
+            
+            <hr>
+            총 탄수화물 량(Corbohydrate) :
+            <input type="number" step="0.01" name="p_corbohydrate" min="0" > (g) <br>
+                식이섬유(Dietary Fiber) :
+                <input type="number" step="0.01" name="p_dietary_fiber" min="0" > (g) <br>
+                당류(Sugar) :
+                <input type="number" step="0.01" name="p_sugar" min="0" > (g) <br>
+            <hr>
 
-        콜레스테롤(Cholesterol) :
-        <input type="number" step="0.01" name="p_cholesterol" min="0" required> (mg) <br>
-        나트륨(Sodium) :
-        <input type="number" step="0.01" name="p_sodium" min="0" required> (mg) <br>
-        
-        <hr>
-        총 탄수화물 량(Corbohydrate) :
-        <input type="number" step="0.01" name="p_corbohydrate" min="0" required> (g) <br>
-            식이섬유(Dietary Fiber) :
-            <input type="number" step="0.01" name="p_dietary_fiber" min="0" required> (g) <br>
-            당류(Sugar) :
-            <input type="number" step="0.01" name="p_sugar" min="0" required> (g) <br>
-        <hr>
+            단백질(Protein) :
+            <input type="number" step="0.01" name="p_protein" min="0" > (g) <br>
+        </div>
 
-        단백질(Protein) :
-        <input type="number" step="0.01" name="p_protein" min="0" required> (g) <br>
-        <input type="submit" value="등록">
+        <div id="input_section_2">
+            성분 :
+            <button class="button" type="button" onclick="addIngredient(this)">성분 추가</button>
+            <input class="button" type="submit" value="등록">
+            
+            <div id="ingredient-list">
+                <div class="autocomplete" style="width:300px;"> 
+                    <input type="text" name="ingredient" id="ing_input">
+                </div>
+                <button class="button" type="button">삭제</button><br>
+            </div>
+        </div>
     </form>
-    <a href="/product?page=1">Prodcut Page</a>
-    
+    <a href="/product?page=1">Prodcut Page</a>    
     <%- include('../templates/login',{loginInfo:loginInfo}) %>
+    <script>
+        let arr=null;
+
+        const xhttp=new XMLHttpRequest();
+        const url=`/product/upload/ingredient`;
+        xhttp.open('GET',url,false);
+        xhttp.onreadystatechange=()=>{
+            if(xhttp.readyState==4&&xhttp.status==200){
+                const response=JSON.parse(xhttp.responseText);
+                arr=response;     
+            }
+        }
+        xhttp.send();
+
+        console.log(arr);
+
+        const ing_input = document.getElementById("ing_input");
+        autocomplete(ing_input,arr);
+
+        function addIngredient(){
+            //성분을 추가하기 위한 메서드를 정의
+            const ingredient_list=document.getElementById("ingredient-list");
+            console.log(ingredient_list);
+            
+            const ing_div=document.createElement("DIV");
+            const ing_input=document.createElement("INPUT");
+            const ing_button=document.createElement("BUTTON");
+            const ing_br=document.createElement("BR");
+
+            ing_div.className="autocomplete"; ing_div.style.width="300px";
+            ing_input.type="text"; ing_input.name="ingredient"; autocomplete(ing_input,arr);
+            ing_button.className="button"; ing_button.type="button"; ing_button.innerHTML="삭제"; 
+            ing_button.onclick="deleteIngredient(this)";
+            
+            ing_button.onclick=function(){
+                console.log(this.className);
+                const previous=ing_button.previousSibling;
+                const next=ing_button.nextSibling;
+                
+                previous.remove();
+                this.remove();
+                next.remove();
+            }
+
+            ingredient_list.appendChild(ing_div);
+            ing_div.appendChild(ing_input)
+            ingredient_list.appendChild(ing_button);
+            ingredient_list.appendChild(ing_br);
+
+            return;
+        }
+
+        function autocomplete(element, arr) {
+            var currentFocus;
+
+            //성분을 입력하는 폼에 입력이벤트가 발생했을 때 동작하는 메서드
+            element.addEventListener("input", function(e) {
+                var a, b, i, val = this.value;
+                
+                closeAllLists();
+                if (!val) { return false;}
+                //아직 입력한 내용이 없다면, currentFocus를 -1로 반환
+                currentFocus = -1;
+                
+                //자동완성에 필요한 문자열들을 저장하는 태그
+                a = document.createElement("DIV");
+                a.setAttribute("id", this.id + "autocomplete-list");
+                a.setAttribute("class", "autocomplete-items");
+                /*append the DIV element as a child of the autocomplete container:*/
+                this.parentNode.appendChild(a);
+                /*for each item in the array...*/
+                for (i = 0; i < arr.length; i++) {
+                    /*check if the item starts with the same letters as the text field value:*/
+                    if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    /*create a DIV element for each matching element:*/
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                        b.addEventListener("click", function(e) {
+                        /*insert the value for the autocomplete text field:*/
+                        element.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                    }
+                }
+            });
+            /*execute a function presses a key on the keyboard:*/
+            element.addEventListener("keydown", function(e) {
+                var x = document.getElementById(this.id + "autocomplete-list");
+                if (x) x = x.getElementsByTagName("div");
+                if (e.keyCode == 40) {
+                    currentFocus++;
+                    addActive(x);
+                } else if (e.keyCode == 38) { //up
+                    currentFocus--;
+                    addActive(x);
+                } else if (e.keyCode == 13) {
+                    e.preventDefault();
+                    if (currentFocus > -1) {
+                    if (x) x[currentFocus].click();
+                    }
+                }
+            });
+                
+            function addActive(x) {
+                if (!x) return false;
+                removeActive(x);
+                if (currentFocus >= x.length) currentFocus = 0;
+                if (currentFocus < 0) currentFocus = (x.length - 1);
+                x[currentFocus].classList.add("autocomplete-active");
+            }
+                
+            function removeActive(x) {
+                for (var i = 0; i < x.length; i++) {
+                    x[i].classList.remove("autocomplete-active");
+                }
+            }
+                
+            function closeAllLists(elmnt) {
+                var x = document.getElementsByClassName("autocomplete-items");
+                for (var i = 0; i < x.length; i++) {
+                    if (elmnt != x[i] && elmnt != element) {
+                        x[i].parentNode.removeChild(x[i]);
+                    }
+                }
+            }
+
+            /*execute a function when someone clicks in the document:*/
+            document.addEventListener("click", function (e) {
+                closeAllLists(e.target);
+            });
+        }
+
+        //autocomplete(document.getElementById("myInput"), arr);
+    </script>
 </body>
 </html>
