@@ -205,8 +205,9 @@
                         <%= viewData.p_brand %></p>
                     <p id="detail-name"><%= viewData.p_name %></p>
                     <div id="sns">
-                        <img src="/image/good.png"><p>5</p>
-                        <img src="/image/bad.png"><p>4</p>
+                        <!--좋아요 수 출력될 부분-->
+                        <img src="/image/good.png"><p><%= SNSData.like %></p>
+                        <img src="/image/bad.png"><p><%= SNSData.unlike %></p>
                     </div>
                 </div>
             </div>

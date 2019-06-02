@@ -568,15 +568,54 @@ app.get('/product',(req,res)=>{
 //해당 상품을 클릭하면, 해당 상품의 정보를 상세하게 볼 수 있는 페이지
 app.get('/product/:p_id',(req,res)=>{
     const p_id=req.params.p_id;
-    selectProduct(p_id).then(selectIngredient).then(data=>{
+    selectProduct(p_id).then(selectIngredient).then(selectSNS).then(data=>{
         const loginInfo={
             loginStatus:req.session.loginStatus,
             userName:req.session.userName,
             isAdmin:req.session.isAdmin
         }
-        res.render('./product/product_info',{viewData:data,loginInfo:loginInfo})
+        console.log(data[0].result[0].p_like);
+        console.log(data[1].result[0].p_unlike);
+        const SNSInfo={
+            like:data[0].result[0].p_like,
+            unlike:data[1].result[0].p_unlike
+        };
+
+        res.render('./product/product_info',{viewData:data[0].data,loginInfo:loginInfo,SNSData:SNSInfo})
     });
-    
+
+    function selectSNS(data){
+        return Promise.all([selectGood(data),selectBad(data)]);
+    ;}
+
+    function selectGood(data){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT COUNT(*) AS p_like FROM product_like WHERE p_id=${data.p_id}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                const passData={
+                    data,
+                    result
+                };
+                resolve(passData);
+            })
+        })
+    }
+
+    function selectBad(data){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT COUNT(*) AS p_unlike FROM product_unlike WHERE p_id=${data.p_id}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                const passData={
+                    data,
+                    result
+                }
+                resolve(passData);
+            })
+        })
+    }
+
     function selectIngredient(data){
         return new Promise((resolve,reject)=>{
             const query=`
