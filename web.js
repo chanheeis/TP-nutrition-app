@@ -567,16 +567,52 @@ app.get('/product',(req,res)=>{
 
 //해당 상품을 클릭하면, 해당 상품의 정보를 상세하게 볼 수 있는 페이지
 app.get('/product/:p_id',(req,res)=>{
-    const query=`SELECT * FROM product WHERE p_id=${req.params.p_id}`;
-    conn.query(query,(err,result)=>{
-        if(err) throw err;
-            const loginInfo={
-                loginStatus:req.session.loginStatus,
-                userName:req.session.userName,
-                isAdmin:req.session.isAdmin
-            }
-        res.render('./product/product_info',{viewData:result[0],loginInfo:loginInfo})
-    })
+    const p_id=req.params.p_id;
+    selectProduct(p_id).then(selectIngredient).then(data=>{
+        const loginInfo={
+            loginStatus:req.session.loginStatus,
+            userName:req.session.userName,
+            isAdmin:req.session.isAdmin
+        }
+        res.render('./product/product_info',{viewData:data,loginInfo:loginInfo})
+    });
+    
+    function selectIngredient(data){
+        return new Promise((resolve,reject)=>{
+            const query=`
+                SELECT ing_name FROM product_ingredient WHERE p_id=${data.p_id}
+            `;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                let passString='';
+                for(item of result){
+                    if(result.indexOf(item)==result.length-1){
+                        passString+=`${item.ing_name}`;
+                    }else{
+                        passString+=`${item.ing_name},`;
+                    }
+                    
+                };
+
+                data.productInfo.p_ingredient=passString;
+                resolve(data.productInfo);
+            })
+        })
+    }
+
+    function selectProduct(p_id){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT * FROM product WHERE p_id=${p_id}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                const passData={
+                    productInfo:result[0],
+                    p_id
+                };
+                resolve(passData);
+            })
+        })
+    }
 })
 
 //해당 상품을 클릭하면, 관리자의 권한으로 해당 상품의 정보를 변경할 수 있도록 하는 페이지
@@ -996,7 +1032,7 @@ app.get('/product/upload/ingredient',(req,res)=>{
     }
 })
 
-app.get('/add',(req,res)=>{
+/*app.get('/add',(req,res)=>{
     const arr=[55,67,69,79,86,87,95];
     const ingList=['organic Sugar Cane','natural Lemon and Lime flavors','Citric Acid','Silicon Dioxide','Malic Acid','Fruit juice (color)','Stevia (leaf) extract (Stevia) (leaf)'];
     mapArray(arr,ingList).then(data=>{
@@ -1024,7 +1060,8 @@ app.get('/add',(req,res)=>{
             }))
         }))
     }
-})
+})*/
+
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
 /*
 app.get('/test', function (req, res) {
