@@ -5,29 +5,302 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        #content{
+            width:1300px;
+            margin:0px auto;
+            padding: 0px 50px;
+            padding-top: 150px;
+            padding-bottom: 20px;
+            overflow: hidden;
+            word-break: break-word;
+            z-index: 1;
+        }
+
+        #detail-title{
+            width:1200px;
+            padding-bottom: 5px;
+            border-bottom: 5px solid #4285f4;
+        }
+
+        /*상품 상세*/
+        #product-details{
+            width:1150px;
+            margin: 20px 25px;
+        }
+
+
+        #detail-img{
+            float: left;
+            width: 500px;
+            height: 300px;
+            text-align: center;
+        }
+
+        #detail-img img{
+            height: 300px;
+        }
+
+
+        #detail-info{
+            width: 650px;
+            height: 300px;
+            float: left;
+            padding: 60px 40px;
+        }
+
+        #detail-brand{
+            width: 570px;
+            height: 20px;
+            margin: 10px 0px;
+            font-size: 13px;
+            color: #4285f4;
+        }
+
+        #detail-name{
+            width: 570px;
+            height: 60px;
+            margin: 10px 0px;
+        }
+
+        #sns{
+            width: 570px;
+            text-align: center;
+        }
+
+        #sns img{
+            height: 30px;
+            float: left;
+        }
+
+        #sns p{
+            width: 40px;
+            height: 30px;
+            float: left;
+            margin: 0px 0px;
+            margin-right: 10px;
+        }
+
+        /**/
+        #Ingredient-comment{
+            width: 750px;
+            margin: 30px auto;
+            float: left;
+        }
+
+        #Ingredient-comment h3{
+            margin-top: 5px;
+            color: #4285f4;
+        }
+
+        #Ingredient{
+            width: 700px;
+            margin: 10px auto;
+            background-color: white;
+        }
+
+        #comment-write{
+            width: 700px;
+            margin: 10px auto;
+        }
+
+        #textarea{
+            width: 80%;
+            float: left;
+        }
+
+        #textarea textarea{
+            width: 100%;
+            height: 60px;
+            resize: none;
+            border-radius: 7px 7px 7px 7px;
+            word-break: break-word;
+        }
+
+        #comment-write button{
+            width: 18%;
+            height: 60px;
+            margin-left: 2%;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 7px 7px 7px 7px;
+        }
+
+        #comment{
+            width: 700px;
+            margin: 10px auto;
+            padding: 10px 10px;
+            color: #555555;
+        }
+
+        #comment-content{
+            margin: 5px 0px;
+            margin-left: 10px;
+        }
+
+        #comment-date{
+            margin-left: 10px;
+            font-size: 11px;
+            color: #777777;
+        }
+
+        #nutrition{
+            width: 400px;
+            float: left;
+            margin: 30px auto;
+        }
+
+        #nutrition h3{
+            margin-top: 5px;
+            color: #4285f4;
+        }
+
+        #nutrition-content{
+            width: 350px;
+            margin: 10px auto;
+            background-color: #eeeeee;
+            font-size: 15px;
+            font-weight: normal;
+        }
+
+        #categorize{
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        #nutrition-content div{
+            width:100%;
+            height: 30px;
+        }
+
+        #white{
+            background-color: white;
+        }
+
+        #n_type{
+            width:170px;
+            height: 30px;
+            margin-left: 5px;
+            float: left;
+        }
+
+        #n_aa{
+            width: 85px;
+            height: 30px;
+            float: left;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/css/product.css">
 </head>
 <body>
-    <h2>Product Info Page</h2>
+    <% include ../templates/header %>
+    <div id="content">
+            <h2 id="detail-title">Product Details</h2>
+            <div id="product-details">
+                <div id="detail-img"><img src="<%= viewData.p_image %>"></div>
+                <div id="detail-info">
+                    <p id="detail-brand">
+                        <%= viewData.p_brand %></p>
+                    <p id="detail-name"><%= viewData.p_name %></p>
+                    <div id="sns">
+                        <img src="/image/good.png"><p>5</p>
+                        <img src="/image/bad.png"><p>4</p>
+                    </div>
+                </div>
+            </div>
+            <div id="Ingredient-comment">
+                <h3>Ingredient</h3>
+                <div id="Ingredient">
+                    <p>XD</p>
+                </div>
+                <h3>comment</h3>
+                <div id="comment-write">
+                    <div id="textarea">
+                        <textarea 
+                            type="text" 
+                            name="m_comment"
+                            maxlength="250" 
+                            id="m_comment"
+                            required></textarea>
+                    </div>
+                    <button onclick="IDCheck()">SUBMIT</button>
+                </div>
+                <div id="comment">
+                    <p>userID</p>
+                    <p id="comment-content">ASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLA</p>
+                    <p id="comment-date">2019-06-01</p>
+                </div>
+                <div id="comment">
+                    <p>userID</p>
+                    <p id="comment-content">ASDFGHJKLA</p>
+                    <p id="comment-date">2019-06-01</p>
+                </div>
+            </div>
+            <div id="nutrition">
+                <h3>nutrition</h3>
+                <div id="nutrition-content">
+                    <div id="categorize">
+                        <p id="n_type">분류</p>
+                        <p id="n_aa">함유량</p>
+                        <p id="n_aa">단위</p>
+                    </div>
+                    <div id="white">
+                        <p id="n_type">Calorie</p>
+                        <p id="n_aa"><%= viewData.p_calorie %></p>
+                        <p id="n_aa">(kCal)</p>
+                    </div>
+                    <div>
+                        <p id="n_type">Total Carbohydrates</p>
+                        <p id="n_aa"><%= viewData.p_corbohydrate %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div id="white">
+                        <p id="n_type">Dietary Fiber</p>
+                        <p id="n_aa"><%= viewData.p_dietary_fiber %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div>
+                        <p id="n_type">Sugars</p>
+                        <p id="n_aa"><%= viewData.p_sugar %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div id="white">
+                        <p id="n_type">Total Fat</p>
+                        <p id="n_aa"><%= viewData.p_fat %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div>
+                        <p id="n_type">Saturated Fat</p>
+                        <p id="n_aa"><%= viewData.p_saturated_fat %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div id="white">
+                        <p id="n_type">Trans Fat</p>
+                        <p id="n_aa"><%= viewData.p_trans_fat %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div>
+                        <p id="n_type">Cholesterol</p>
+                        <p id="n_aa"><%= viewData.p_cholesterol %></p>
+                        <p id="n_aa">(mg)</p>
+                    </div>
+                    <div id="white">
+                        <p id="n_type">Protein</p>
+                        <p id="n_aa"><%= viewData.p_protein %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                    <div>
+                        <p id="n_type">Sodium</p>
+                        <p id="n_aa"><%= viewData.p_sodium %></p>
+                        <p id="n_aa">(g)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     <ul>
-        <li>ID : <%= viewData.p_id %></li>
-        <li>이름 : <%= viewData.p_name %></li>
-        <li>브랜드 : <%= viewData.p_brand %></li>
-        <li>설명 : <%= viewData.p_desc %></li>
-        <li>중량 : <%= viewData.p_weight %></li>
-        <li>맛 : <%= viewData.p_flavor %></li>
-        <li>칼로리 : <%= viewData.p_calorie %></li>
-        <li>지방 : <%= viewData.p_fat %></li>
-        <li>불포화 지방 : <%= viewData.p_saturated_fat %></li>
-        <li>트랜스지방 : <%= viewData.p_trans_fat %></li>
-        <li>콜레스테롤 : <%= viewData.p_cholesterol %></li>
-        <li>탄수화물 총량 : <%= viewData.p_corbohydrate %></li>
-        <li>나트륨 : <%= viewData.p_sodium %></li>
-        <li>식이섬유 : <%= viewData.p_dietary_fiber %></li>
-        <li>당류 : <%= viewData.p_sugar %></li>
-        <li>단백질 : <%= viewData.p_protein %></li>
-        <li>상품 이미지 : <%= viewData.p_image %></li>
     </ul>
-    <a href="/product?page=1">돌아가기</a><br>
     <% if(loginInfo.isAdmin===true){ %>
         <a href="/product/<%= viewData.p_id %>/edit">편집하기</a>    
     <% } %>

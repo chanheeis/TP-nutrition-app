@@ -58,6 +58,230 @@ app.get('/',(req,res)=>{
     res.render('home',{loginInfo:loginInfo});
 })
 
+//제품을 추천하는 JSON 응답의 AJAX요청 수행
+app.post('/recommend',(req,res)=>{
+
+    const res_1=req.body.res_1;
+    const res_2=req.body.res_2;
+    const res_3=req.body.res_3;
+    const res_4=req.body.res_4;
+
+    insertResponse(res_1,res_2,res_3,res_4).catch(err=>console.log(err))
+        .then(selectResponse).catch(err=>console.log(err))
+        .then(processCondition).catch(err=>console.log(err))
+        .then(selectProduct).catch(err=>console.log(err))
+        .then(filterProducts).catch(err=>console.log(err)).then(data=>console.log(data));
+    
+    function filterProducts(data){
+        return new Promise((resolve,reject)=>{
+            const condition=data.condition;
+            const products=data.products;
+            const resultArr=[];
+
+            if(condition.isDiabetes&&condition.isKidneyDisorder){
+                let count=0;
+                console.log(count);
+                for(product of products){
+                    console.log(product);
+                    if(
+                        calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
+                        calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        product.p_sugar==0&&
+                        product.p_protein<15
+                    ){
+                        resultArr.push(product.p_id);
+                        console.log(resultArr);
+                        count++;
+                        console.log(count);
+                        if(count==3) break;
+                    }
+                }
+                resolve(resultArr);
+            }else if(condition.isDiabetes&&!condition.isKidneyDisorder){
+                let count=0;
+                console.log(count);
+                for(product of products){
+                    console.log(product);
+                    if(
+                        calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
+                        calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        product.p_sugar==0
+                    ){
+                        resultArr.push(product.p_id);
+                        console.log(resultArr);
+                        count++;
+                        console.log(count);
+                        if(count==3) break;
+                    }
+                }
+                resolve(resultArr);
+            }else if(!condition.isDiabetes&&condition.isKidneyDisorder){
+                let count=0;
+                console.log(count);
+                for(product of products){
+                    console.log(product);
+                    if(
+                        calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
+                        calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        product.p_protein<15
+                    ){
+                        resultArr.push(product.p_id);
+                        console.log(resultArr);
+                        count++;
+                        console.log(count);
+                        if(count==3) break;
+                    }
+                }
+                resolve(resultArr);
+            }else if(!condition.isDiabetes&&!condition.isKidneyDisorder){
+                let count=0;
+                console.log(count);
+                for(product of products){
+                    console.log(product);
+                    if(
+                        calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
+                        calRate(product.p_serving,product.p_protein)<=condition.maxProRate
+                    ){
+                        resultArr.push(product.p_id);
+                        console.log(resultArr);
+                        count++;
+                        console.log(count);
+                        if(count==3) break;
+                    }
+                }
+                resolve(resultArr);
+            }
+        })
+    }
+
+    function selectProduct(data){
+        return new Promise((resolve,reject)=>{
+            const query=`
+                SELECT p_id,p_protein,p_corbohydrate,p_sugar FROM product
+            `;
+            conn.query(query,(err,result)=>{
+                if(err)throw err;
+                const passData={
+                    condition:data,
+                    products:result
+                }
+                resolve(passData);
+            })
+            
+        })
+    }
+
+    function processCondition(data){
+        return new Promise((resolve,reject)=>{    
+            let minProteinLimit=null;
+            let maxProteinLimit=null;
+            let minProtein=null;
+            let maxProtein=null;
+            let minCarRate=null;
+            let maxCarRate=null;
+            let minProRate=null;
+            let maxProRate=null;
+            let isDiabetes=false;
+            let isKidneyDisorder=false;
+
+            //res_1에 대한 처리 (신장 장애 여부)
+            if(data.res_1=='T'){
+                isKidneyDisorder=true;
+                minProteinLimit=10;
+                maxProteinLimit=15;
+            }
+            //res_2에 대한 처리 (보충제 섭취의 목적)
+            switch (data.res_2){
+                case '체중감량' :
+                    isDiabetes=true;
+                    minProtein=0.8;
+                    maxProtein=1.2;
+                    maxCarRate=35;
+                    minCarRate=25;
+                    maxProRate=45;
+                    minProRate=35;
+                    break;
+                case '일반적인 운동' :
+                    minProtein=1.2;
+                    maxProtein=1.6;
+                    maxCarRate=55;
+                    minCarRate=45;
+                    maxProRate=35;
+                    minProRate=25;
+                    break;
+                case '근육증가' :
+                    minProtein=1.6;
+                    maxProtein=2.5;
+                    minCarRate=35;
+                    maxCarRate=45;
+                    maxProRate=55;
+                    minProRate=45;
+                    break;
+                default :
+                    break;
+            }
+            //res_3에 대한 처리 (몸무게)
+            minProtein=(minProtein)*(data.res_3)-80;
+            maxProtein=(maxProtein)*(data.res_3)-80;
+            //res_4에 대한 처리 (당뇨 여부)
+            if(data.res_4=='T'){
+                isDiabetes=true;
+            }
+            console.log(`귀하의 분석 결과 : `)
+            if(isKidneyDisorder){
+                console.log(`프로틴 제한 : ${minProteinLimit}~${maxProteinLimit}`);
+            }
+            console.log(`프로틴 권장 섭취량 : ${minProtein}~${maxProtein}`);
+            console.log(`탄수화물 권장 비율 : ${minCarRate}%~${maxCarRate}%`);
+            console.log(`단백질 권장 비율 : ${minProRate}%~${maxProRate}%`);
+
+            const passData={
+                minProteinLimit,maxProteinLimit,
+                minProtein,maxProtein,
+                minCarRate,maxCarRate,
+                minProRate,maxProRate,
+                isDiabetes,isKidneyDisorder
+            };
+
+            resolve(passData);
+        })
+    }
+
+    function insertResponse(res_1,res_2,res_3,res_4){
+        return new Promise((resolve,reject)=>{
+            const query="INSERT INTO response SET ?";
+            
+            let res_user="unknown";
+            if(req.session.memberNumber){
+                res_user=req.session.memberNumber
+            };
+
+            const queryData={
+                res_1,res_2,res_3,res_4,res_user
+            };
+            conn.query(query,queryData,(err,result)=>{
+                if(err) throw err;
+                resolve(result.insertId);
+            })
+        })
+    }
+
+    function selectResponse(insertId){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT res_1,res_2,res_3,res_4 FROM response WHERE res_id=${insertId}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                resolve(result[0]);
+            })
+        })
+    }
+
+    function calRate(sumWeight,weight){
+        return (weight/sumWeight)*100;
+    };
+
+})
+
 app.get('/join',(req,res)=>{
     const loginInfo={
             loginStatus:req.session.loginStatus,
@@ -173,12 +397,32 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
         p_sugar,p_protein,p_image
     };
 
-    mappingIng(ingredient,data).catch(err=>console.log(`Error Occured During Promise_1!! ${err}`))
-    .then(insertProduct).catch(err=>console.log(`Error Occured During Promise_2!! ${err}`))
-    .then(insertIngredient).catch(err=>console.log(`Error Occured During Promise_3!! ${err}`))
-    .then(()=>{
-        res.redirect('/product/upload');
-    })
+    if(typeof ingredient=='string'){
+
+    }else{
+        mappingIng(ingredient,data).catch(err=>console.log(`Error Occured During Promise_1!! ${err}`))
+        .then(insertProduct).catch(err=>console.log(`Error Occured During Promise_2!! ${err}`))
+        .then(insertIngredient).catch(err=>console.log(`Error Occured During Promise_3!! ${err}`))
+        .then(()=>{
+            res.redirect('/product/upload');
+        })
+    }
+    function mappingIng_str(item,data){
+        return new Promise((resolve,reject)=>{
+            const passData={
+                ingredient:item,
+                data
+            };
+
+            const query=`
+            SELECT * FROM (
+                SELECT ing_name FROM ingredient 
+                UNION
+                SELECT ano_name AS ing_name FROM anotherName
+            ) ING WHERE ing_name='${item}'
+            `
+        })
+    }
 
     function mappingIng(list,data){
         return Promise.all(list.map(item=>{
@@ -188,7 +432,6 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
                     ingredient:item,
                     data
                 };
-
                 const query=`
                     SELECT * FROM (
                         SELECT ing_name FROM ingredient 
@@ -283,7 +526,10 @@ app.post('/product/upload',upload.single('p_image'),(req,res)=>{
 //DB에 등록되어 있는 모든 보충제 제품들을 보여주는 페이지, query 객체를 이용하여 페이지별로 20개씩 조회될 수 있게 함
 app.get('/product',(req,res)=>{
     const page=req.query.page;
-
+    if(req.query.sort){
+        const sort=req.query.page;
+    }
+    
     if(req.session.loginStatus){
         //session에 memberNumber가 있을 경우(즉, 로그인 상태가 True일 경우 정의되는 쿼리)
         const query=
@@ -747,6 +993,36 @@ app.get('/product/upload/ingredient',(req,res)=>{
             })
             resolve(arr);        
         })
+    }
+})
+
+app.get('/add',(req,res)=>{
+    const arr=[55,67,69,79,86,87,95];
+    const ingList=['organic Sugar Cane','natural Lemon and Lime flavors','Citric Acid','Silicon Dioxide','Malic Acid','Fruit juice (color)','Stevia (leaf) extract (Stevia) (leaf)'];
+    mapArray(arr,ingList).then(data=>{
+        console.log(data);
+        res.send("Complete!");
+    })
+    function mapArray(arr,ingList){
+        return Promise.all(arr.map(item=>{
+            return Promise.all(ingList.map(ing=>{
+                return new Promise((resolve,reject)=>{
+                    const query=`
+                        INSERT INTO product_ingredient SET ?
+                    `;
+                    const queryData={
+                        p_id:item,
+                        ing_name:ing
+                    };
+                    conn.query(query,queryData,(err,result)=>{
+                        if(err) throw err;
+                        console.log(result);
+
+                        resolve(result);
+                    })
+                })
+            }))
+        }))
     }
 })
 //해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분

@@ -2,140 +2,143 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta id="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
-    <style>
-        #main-img{
-            width: 800px;
-            height: 400px;
-            margin:0px auto;
-		}
-
-		#textimg{
-			width: 800px;
-			height: 400px;
-			position: absolute;
-			top: 110px;
-			margin: 0px 5px;
-		}
-
-		#black{
-			width: 800px;
-			height: 400px;
-			background-color: rgba(0, 0, 0, 0.5);
-			position: absolute;
-			top: 70px;
-			margin: 0px 5px;
-		}
-
-		#XD-wrapper{
-			width: 1200px;
-		}
-
-		#XD{
-			width: 590px;
-			height: 120px;
-			margin: 10px 5px;
-			float:left;
-			background-color: yellow;
-		}
-
-/*슬라이드쇼*/
-		.mySlides {display: none;}
-
-		.slideshow-container {
-			top: 0px;
-			left: 0px;
-			height: 100%;
-		}
-
-		.slideshow-container img{
-			width: 1190px;
-			height: 600px;
-			overflow: hidden;
-		}
-
-		/* 사진 전환 효과 */
-		.fade {
-		  -webkit-animation-name: fade;
-		  -webkit-animation-duration: 1.5s;
-		  animation-name: fade;
-		  animation-duration: 1.5s;
-		}
-
-		@-webkit-keyframes fade {
-		  from {opacity: .4} 
-		  to {opacity: 1}
-		}
-
-		@keyframes fade {
-		  from {opacity: .4} 
-		  to {opacity: 1}
-		}
-    </style>
 </head>
 <body onload="initial()">
     <% include ./templates/header %>
     <div id="content">
-        <div id="main-img">
-            <div class="slideshow-container">
-                <div class="mySlides fade">
-                    <img src="image/01.jpg">
-                </div>
-                <div class="mySlides fade">
-                    <img src="image/02.jpg">
-                </div>
-                <div class="mySlides fade">
-                    <img src="image/03.jpg">
-                </div>
-                <div class="mySlides fade">
-                    <img src="image/04.jpg">
-                </div>
-                <div class="mySlides fade">
-                    <img src="image/05.jpg">
-                </div>
+        <p id="question-info" style="color:red">(사용자)님에게 적합한 보충제를 찾기 위한 질문이 4개 준비되어 있습니다.</p>
+        <div id="question-wrapper">
+            <div>
+                <form>
+                    <p>앓고 계시는 신장 질환이 있으신가요?</p>
+                    <div>
+                        Yes<input type="radio" class="res_1" name="res_1" value="T" checked>
+                        No<input type="radio" class="res_1" name="res_1" value="F">
+                    </div>
+                </form>
+                <button type="button" onclick="nextQuestion_radio('res_1',str_2)">응답</button>
             </div>
         </div>
-
-        <div id="black">&nbsp;</div>
-        <img id="textimg" src="image/textimg.png">
-        <div id="XD-wrapper">
-            <div id="XD">
-            </div>
-            <div id="XD">
-            </div>
-        </div>
-
-        <div>
-            <p>앓고 계시는 신장 질환이 있으신가요?</p>
-            <input type="radio" name="res_1" value="T">
-            <input type="radio" name="res_1" value="F">
-        </div>
-        <button type="button">응답</button>
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
     <script>
-        function initial(){
-            const currentMenu=document.getElementById("menu_home");
-            currentMenu.id="currentMenu";
-        }
+        const resQueue=[];
+        const str_2=`
+            <div>
+                <p>보충제 섭취의 목적이 어떻게 되시나요?</p>
+                <div>
+                    <form>
+                        체중감량<input type="radio" class="res_2" name="res_2" value="체중감량" checked>
+                        근육증가<input type="radio" class="res_2" name="res_2" value="근육증가">
+                        일반적인 운동<input type="radio" class="res_2" name="res_2" value="일반적인 운동">
+                    </form>
+                </div>
+                <button type="button" onclick="nextQuestion_radio('res_2',str_3)">응답</button>
+            </div>
+        `;
 
-        var slideIndex = 0;
-		showSlides();
+        const str_3=`
+            <div>
+                <div>
+                    <p>귀하의 몸무게는 어떻게 되십니까?</p>
+                    소수점 한자리까지 적어주세요. <input type="number" id="res_3" name="res_3">
+                </div>
+                <button type="button" onclick="nextQuestion('res_3',str_4)">응답</button>
+            </div>    
+        `;
 
-		function showSlides() {
-		  var i;
-		  var slides = document.getElementsByClassName("mySlides");
-		  for (i = 0; i < slides.length; i++) {
-			slides[i].style.display = "none";  
-		  }
-		  slideIndex++;
-		  if (slideIndex > slides.length) {slideIndex = 1}    
-		  slides[slideIndex-1].style.display = "block";  
-		  setTimeout(showSlides, 2000);
-        }
+        const str_4=`
+            <div>
+                <div>
+                    <form>
+                        <p>당뇨 질환을 앓고 계십니까?</p>
+                        Yes<input type="radio" class="res_4" name="res_4" value="T" checked>
+                        No<input type="radio" class="res_4" name="res_4" value="F">
+                    </form>
+                </div>
+                <button type="button" onclick="lastQuestion('res_4',str_5)">응답</button>
+            </div>
+        `
         
+        const str_5="처리중입니다. 잠시만 기다려주세요";
+        
+        function createElementFromHTML(htmlString){
+            const div=document.createElement('DIV');
+            div.innerHTML=htmlString.trim();
+            return div.firstChild;
+        }
+
+        //Radio 버튼인 곳에 적용할 로직
+        function nextQuestion_radio(resNum,htmlString){
+            const questionWrapper=document.getElementById("question-wrapper");
+            let resValue=null;
+
+            const eleList=document.getElementsByClassName(resNum);
+            
+            for(ele of eleList){
+                if(ele.checked){
+                    resValue=ele.value;
+                    break;
+                }
+            }
+            
+            resQueue.push(resValue);
+
+            questionWrapper.removeChild(questionWrapper.children[0]);
+            questionWrapper.appendChild(createElementFromHTML(htmlString));
+        }
+
+        function nextQuestion(resNum,htmlString){
+            const questionWrapper=document.getElementById("question-wrapper");
+            const resValue=document.getElementById(resNum).value;
+            resQueue.push(resValue);
+
+            questionWrapper.removeChild(questionWrapper.children[0]);
+            questionWrapper.appendChild(createElementFromHTML(htmlString));
+        }
+
+        function lastQuestion(resNum,htmlString){
+            const questionWrapper=document.getElementById("question-wrapper");
+            const questionInfo=document.getElementById("question-info");
+            let resValue=null;
+
+            const eleList=document.getElementsByClassName(resNum);
+
+            for(ele of eleList){
+                if(ele.checked){
+                    resValue=ele.value;
+                    break;
+                }
+            }
+
+            resQueue.push(resValue); 
+            console.log(`Last Response Queue : ${resQueue}`);
+
+            questionWrapper.remove();
+            questionInfo.innerHTML=htmlString;
+
+            //처리중입니다 => 귀하에게 적합한 제품은 다음과 같습니다. (AJAX요청 완료 시)
+            const xhttp=new XMLHttpRequest();
+            const url='/recommend';
+            xhttp.open('POST',url,true);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.readyState==4&&xhttp.status==200){
+                    questionInfo.innerHTML="귀하에게 적합한 제품은 다음과 같습니다.";
+                }
+            }
+
+            const data={
+                res_1:resQueue[0],
+                res_2:resQueue[1],
+                res_3:resQueue[2],
+                res_4:resQueue[3]       
+            };
+            xhttp.send(JSON.stringify(data));
+        }
     </script>
 </body>
 </html>
