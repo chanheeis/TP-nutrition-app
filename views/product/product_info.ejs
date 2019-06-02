@@ -206,8 +206,8 @@
                     <p id="detail-name"><%= viewData.p_name %></p>
                     <div id="sns">
                         <!--좋아요 수 출력될 부분-->
-                        <img src="/image/good.png"><p><%= SNSData.like %></p>
-                        <img src="/image/bad.png"><p><%= SNSData.unlike %></p>
+                        <img src="/image/good.png" style="cursor:pointer;" onclick="handleLike(this,'<%- viewData.p_id %>')"><p><%= SNSData.like %></p>
+                        <img src="/image/bad.png" style="cursor:pointer;" onclick="handleUnlike(this,'<%- viewData.p_id %>')"><p><%= SNSData.unlike %></p>
                     </div>
                 </div>
             </div>
@@ -226,18 +226,14 @@
                             id="m_comment"
                             required></textarea>
                     </div>
-                    <button onclick="IDCheck()">SUBMIT</button>
+                    <button style="cursor: pointer;" type="button" onclick="createCmt(this)">SUBMIT</button>
                 </div>
-                <div id="comment">
-                    <p>userID</p>
-                    <p id="comment-content">ASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLAASDFGHJKLA</p>
-                    <p id="comment-date">2019-06-01</p>
-                </div>
-                <div id="comment">
-                    <p>userID</p>
-                    <p id="comment-content">ASDFGHJKLA</p>
-                    <p id="comment-date">2019-06-01</p>
-                </div>
+                <% commentData.forEach(function(data){ %>
+                    <div id="comment">
+                            <p id="comment-content"><%=data.cmt_content %></p>
+                            <p id="comment-date"><%=data.cmt_date %></p>
+                    </div>
+                <% }) %>
             </div>
             <div id="nutrition">
                 <h3>nutrition</h3>
@@ -307,5 +303,93 @@
     <% } %>
     
     <%- include('../templates/login',{loginInfo:loginInfo}) %>
+    <script>
+
+        //body onload에 적용할 함수
+        function initial(){
+            if(window.innerWidth<1494){
+                const loginBox=document.getElementById("log");
+                loginBox.style.display="none";
+            }
+            const currentMenu=document.getElementById("menu_product");
+            currentMenu.id="currentMenu";
+        }
+
+        function loginSize(){
+            if(window.innerWidth<1494){
+                const loginBox=document.getElementById("log");
+                loginBox.style.display="none";
+            }else{
+                const loginBox=document.getElementById("log");
+                loginBox.style.display="block";
+            }
+        }
+
+        function handleLike(element,data){
+            if(!'<%- loginInfo.loginStatus %>'){
+                alert("로그인이 필요한 서비스입니다!");
+                return;
+            }
+            const p_id=data;
+            const xhttp=new XMLHttpRequest();
+            const url=`/like/${p_id}`;
+
+            xhttp.open('GET',url,true);
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.readyState===4&&xhttp.status===200){
+                    const response=JSON.parse(xhttp.responseText);
+                    //Parent Node의 두번째 자식인 p태그 내에 Parameter로 넘어온 COUNT값을 넣음
+                    element.nextSibling.innerHTML=response.COUNT;
+                }
+            }
+            xhttp.send();
+        }
+
+        function handleUnlike(element,data){
+            if(!'<%- loginInfo.loginStatus %>'){
+                alert("로그인이 필요한 서비스입니다!");
+                return;
+            }
+
+            const p_id=data;
+            const xhttp=new XMLHttpRequest();
+            const url=`/unlike/${p_id}`;
+
+            xhttp.open('GET',url,true);
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.readyState===4&&xhttp.status===200){
+                    const response=JSON.parse(xhttp.responseText);
+                    
+                    //Parent Node의 두번째 자식인 p태그 내에 Parameter로 넘어온 COUNT값을 넣음
+                    element.nextSibling.innerHTML=response.COUNT;
+                }
+            }
+            xhttp.send();
+        }
+
+        function createCmt(){
+            //로그인이 필요한 서비스
+            if(!'<%- loginInfo.loginStatus %>'){
+                alert("로그인이 필요한 서비스입니다!");
+                return;
+            }
+            const cmt_content=document.getElementById("m_comment").value;
+            const xhttp=new XMLHttpRequest();
+            const url="/product/<%- viewData.p_id %>/comment";
+            xhttp.open('POST',url,true);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.readyState==4&&xhttp.status==200){
+                    location.reload();
+                }
+            }
+
+            const data={
+                cmt_content
+            };
+            console.log(data);
+            xhttp.send(JSON.stringify(data));
+        }
+    </script>
 </body>
 </html>

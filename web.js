@@ -568,21 +568,32 @@ app.get('/product',(req,res)=>{
 //해당 상품을 클릭하면, 해당 상품의 정보를 상세하게 볼 수 있는 페이지
 app.get('/product/:p_id',(req,res)=>{
     const p_id=req.params.p_id;
-    selectProduct(p_id).then(selectIngredient).then(selectSNS).then(data=>{
-        const loginInfo={
-            loginStatus:req.session.loginStatus,
-            userName:req.session.userName,
-            isAdmin:req.session.isAdmin
-        }
-        console.log(data[0].result[0].p_like);
-        console.log(data[1].result[0].p_unlike);
-        const SNSInfo={
-            like:data[0].result[0].p_like,
-            unlike:data[1].result[0].p_unlike
-        };
+    selectProduct(p_id).then(selectIngredient).then(selectSNS).then(selectComment);
 
-        res.render('./product/product_info',{viewData:data[0].data,loginInfo:loginInfo,SNSData:SNSInfo})
-    });
+    function selectComment(data){
+        return new Promise((resolve,reject)=>{
+            const query=`
+                SELECT cmt_content,cmt_date FROM product_cmt WHERE p_id=${data[0].data.p_id} LIMIT 0,3 
+            `;
+
+            conn.query(query,(err,result)=>{
+                const loginInfo={
+                    loginStatus:req.session.loginStatus,
+                    userName:req.session.userName,
+                    isAdmin:req.session.isAdmin
+                };
+                const SNSInfo={
+                    like:data[0].result[0].p_like,
+                    unlike:data[1].result[0].p_unlike
+                };
+                const commentData={
+                    result
+                }                
+                console.log(commentData.result);
+                res.render('./product/product_info',{viewData:data[0].data,loginInfo,SNSData:SNSInfo,commentData:commentData.result})
+            })
+        })
+    }
 
     function selectSNS(data){
         return Promise.all([selectGood(data),selectBad(data)]);
@@ -654,6 +665,25 @@ app.get('/product/:p_id',(req,res)=>{
     }
 })
 
+app.post('/product/:p_id/comment',(req,res)=>{
+    const p_id=req.params.p_id;
+    const m_number=req.session.memberNumber;
+    const cmt_content=req.body.cmt_content;
+
+    const query=`
+        INSERT INTO product_cmt SET ?
+    `;
+    const queryData={
+        p_id,m_number,cmt_content
+    };
+
+    conn.query(query,queryData,(err,result)=>{
+        if(err) throw err;
+        console.log(result);
+        res.json();
+    })
+})
+
 //해당 상품을 클릭하면, 관리자의 권한으로 해당 상품의 정보를 변경할 수 있도록 하는 페이지
 app.get('/product/:p_id/edit',(req,res)=>{
     const queryStr=req.params.p_id;
@@ -722,7 +752,6 @@ app.get('/product/:p_id/delete',(req,res)=>{
         if(err) throw err;
         res.redirect('/product?page=1');
     })
-
 })
 
 app.get('/logout',(req,res)=>{
