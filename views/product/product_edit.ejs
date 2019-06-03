@@ -17,9 +17,6 @@
         Brand :
         <input type="text" name="p_brand" required value="<%= viewData.p_brand %>"><br>
 
-        <textarea name="p_desc" placeholder="설명을 입력하세요." required><%= viewData.p_desc %></textarea>
-        <br>
-
         <input id="file_upload" type="file" name="p_image" accept=".png, .jpg" value="search.png"><br>
         
 
@@ -57,6 +54,10 @@
 
         단백질(Protein) :
         <input type="number" step="0.01" name="p_protein" min="0" required value="<%= viewData.p_protein %>"> (g) <br>
+
+        1회 제공량 :
+        <input type="number" name="p_serving" min="0" value="<%= viewData.p_serving %>"> <br>(g)
+
         <input type="submit" name="submitType" value="편집완료">
         <input type="submit" name="submitType" value="삭제하기">
     </form>

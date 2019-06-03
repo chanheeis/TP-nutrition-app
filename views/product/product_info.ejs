@@ -194,7 +194,7 @@
     </style>
     <link rel="stylesheet" type="text/css" href="/css/product.css">
 </head>
-<body>
+<body onload="checkIng()">
     <% include ../templates/header %>
     <div id="content">
             <h2 id="detail-title">Product Details</h2>
@@ -214,7 +214,7 @@
             <div id="Ingredient-comment">
                 <h3>Ingredient</h3>
                 <div id="Ingredient">
-                    <p><%=viewData.p_ingredient %></p>
+                    <p id="ing_names"><%=viewData.p_ingredient %></p>
                 </div>
                 <h3>comment</h3>
                 <div id="comment-write">
@@ -388,6 +388,26 @@
                 cmt_content
             };
             console.log(data);
+            xhttp.send(JSON.stringify(data));
+        }
+        
+        function checkIng(){
+            let ing_names=document.getElementById("ing_names");
+            let nameList=ing_names.innerHTML.split(',');
+            const data={
+                nameList
+            }
+            console.log(data);
+            
+            const xhttp=new XMLHttpRequest();
+            const url='/ingCheck';
+            xhttp.open('POST',url,true);
+            xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhttp.onreadystatechange=()=>{
+                if(xhttp.onreadystatechange==4&&xhttp.status==200){
+                    //응답 완료 시 처리할 부분
+                }
+            }
             xhttp.send(JSON.stringify(data));
         }
     </script>

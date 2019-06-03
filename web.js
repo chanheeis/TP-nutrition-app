@@ -593,7 +593,6 @@ app.get('/product/:p_id',(req,res)=>{
                 const commentData={
                     result
                 }                
-                console.log(commentData.result);
                 res.render('./product/product_info',{viewData:data[0].data,loginInfo,SNSData:SNSInfo,commentData:commentData.result})
             })
         })
@@ -636,6 +635,7 @@ app.get('/product/:p_id',(req,res)=>{
             const query=`
                 SELECT ing_name FROM product_ingredient WHERE p_id=${data.p_id}
             `;
+            //여기서부터 새로 추가한 부분
             conn.query(query,(err,result)=>{
                 if(err) throw err;
                 let passString='';
@@ -668,7 +668,23 @@ app.get('/product/:p_id',(req,res)=>{
         })
     }
 })
+app.post('/ingCheck',(req,res)=>{
+    const nameList=req.body.nameList;
+    console.log(nameList);
 
+    function selectIngre(nameList){
+        return Promise.all(nameList.map(name=>{
+            return new Promise((resolve,reject)=>{
+                const query=`
+                    SELECT * FROM ingredient WHERE ing_name=${name}
+                `;
+                conn.query(query,(err,result)=>{
+                    if(err) throw err;
+                })
+            })
+        }))
+    }
+})
 app.post('/product/:p_id/comment',(req,res)=>{
     const p_id=req.params.p_id;
     const m_number=req.session.memberNumber;
@@ -723,15 +739,17 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
         const p_dietary_fiber=req.body.p_dietary_fiber;
         const p_sugar=req.body.p_sugar;
         const p_protein=req.body.p_protein;
-    
+        const p_serving=req.body.p_serving;
+
         const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
+        
         let data={
             p_name,p_brand,
             p_weight,p_flavor,p_fat,
             p_saturated_fat,p_trans_fat,p_cholesterol,
             p_sodium,p_corbohydrate,p_dietary_fiber,
-            p_sugar,p_protein,p_calorie   
-        }
+            p_sugar,p_protein,p_calorie,p_serving   
+        };
     
         if(req.file){
             const p_image=`/image/uploads/${req.file.originalname}`;    
