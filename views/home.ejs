@@ -180,97 +180,7 @@
                     </form>
                     <button type="button" onclick="nextQuestion_radio('res_1',str_2)">응답</button>
             </div>
-        </div>
-
-        <div id="product-wrapper">
-            <div id="shadow">
-                <a href="">
-                    <div id="product">
-                        <div class="product-img">
-                            <img src="http://drotein.co.kr/image/uploads/3.1.png">
-                        </div>
-                        <div class="product-info">
-                                <p id="brand"><span>Integrated Supplemen</span></p>
-                                <p><span>Whey Isolate Protein Snack Edition: Premium Flavor</span></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div id="sns">
-                <div>
-                    <a href=""><img src="/image/good.png"></a>
-                    <p>0</p>
-                </div>
-                <div>
-                    <a href=""><img src="/image/bad.png"></a>
-                    <p>0</p>
-                </div>
-                <div>
-                    <a href=""><img src="/image/comment.png"></a>
-                    <p>0</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="product-wrapper">
-            <div id="shadow">
-                <a href="">
-                    <div id="product">
-                        <div class="product-img">
-                            <img src="http://drotein.co.kr/image/uploads/41.1.jpg">
-                        </div>
-                        <div class="product-info">
-                                <p id="brand"><span>Sparta Nutrition</span></p>
-                                <p><span>Whey Protein Blends</span></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div id="sns">
-                <div>
-                    <a href=""><img src="/image/good.png"></a>
-                    <p>0</p>
-                </div>
-                <div>
-                    <a href=""><img src="/image/bad.png"></a>
-                    <p>0</p>
-                </div>
-                <div>
-                    <a href=""><img src="/image/comment.png"></a>
-                    <p>0</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="product-wrapper">
-            <div id="shadow">
-                <a href="">
-                    <div id="product">
-                        <div class="product-img">
-                            <img src="http://drotein.co.kr/image/uploads/11.jpg">
-                        </div>
-                        <div class="product-info">
-                                <p id="brand"><span>TRANSPARENT LABS</span></p>
-                                <p><span>100% GRASS-FED WHEY PROTEIN ISOLATE</span></p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div id="sns">
-                <div>
-                    <a href=""><img src="/image/good.png"></a>
-                    <p>0</p>
-                </div>
-                <div>
-                    <a href=""><img src="/image/bad.png"></a>
-                    <p>0</p>
-                </div>
-                <div>
-                    <a href=""><img src="/image/comment.png"></a>
-                    <p>0</p>
-                </div>
-            </div>
-        </div>
+        </div>  
     </div>
     <%- include('templates/login',{loginInfo:loginInfo}) %>
     <script>
@@ -384,11 +294,44 @@
                 //JSON응답을 배열로 받아, 응답의 갯수만큼 IMG태그를 만들어 노출시키는 로직 설계하기
                 if(xhttp.readyState==4&&xhttp.status==200){
                     if(xhttp.responseText===null){
-                        console.log(xhttp.responseText);
                         console.log("응답이 비어있습니다!");
                     }else{
-                        console.log(xhttp.responseText);
-                        console.log("응답이 있습니다!");
+                        const result=JSON.parse(xhttp.responseText);
+                        for(let i=0;i<result.length;i++){
+                            const content=document.getElementById("content");
+                            let str=`
+                            <div id="product-wrapper">
+                                <div id="shadow">
+                                    <a href="/product/${result[i][0].p_id}">
+                                        <div id="product">
+                                            <div class="product-img">
+                                                <img src="${result[i][0].p_image}">
+                                            </div>
+                                            <div class="product-info">
+                                                    <p id="brand"><span>${result[i][0].p_brand}</span></p>
+                                                    <p><span>${result[i][0].p_name}</span></p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div id="sns">
+                                    <div>
+                                        <a href=""><img src="/image/good.png"></a>
+                                        <p>0</p>
+                                    </div>
+                                    <div>
+                                        <a href=""><img src="/image/bad.png"></a>
+                                        <p>0</p>
+                                    </div>
+                                    <div>
+                                        <a href=""><img src="/image/comment.png"></a>
+                                        <p>0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                            content.appendChild(createElementFromHTML(str));
+                        }
                     }
                 }
             }

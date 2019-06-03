@@ -70,7 +70,21 @@ app.post('/recommend',(req,res)=>{
         .then(selectResponse).catch(err=>console.log(err))
         .then(processCondition).catch(err=>console.log(err))
         .then(selectProduct).catch(err=>console.log(err))
-        .then(filterProducts).catch(err=>console.log(err)).then(data=>res.json(data));
+        .then(filterProducts).catch(err=>console.log(err)).then(
+            idList=>{
+                return Promise.all(idList.map(id=>{
+                    return new Promise((resolve,reject)=>{
+                        const query=`
+                            SELECT p_id, p_brand, p_name, p_image FROM product WHERE p_id=${id}
+                        `;
+                        conn.query(query,(err,result)=>{
+                            if(err) throw err;
+                            resolve(result)
+                        })
+                    })
+                }))
+            }
+        ).then(data=>res.json(data));
     
     function filterProducts(data){
         return new Promise((resolve,reject)=>{
@@ -82,13 +96,15 @@ app.post('/recommend',(req,res)=>{
                 let count=0;
                 console.log(count);
                 for(product of products){
-                    console.log(product);
                     if(
                         calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
                         calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)>=condition.minCarRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)<=condition.maxCarRate&&
                         product.p_sugar==0&&
                         product.p_protein<15
                     ){
+                        console.log("minCarRate : "+condition.minCarRate);
                         resultArr.push(product.p_id);
                         console.log(resultArr);
                         count++;
@@ -101,12 +117,14 @@ app.post('/recommend',(req,res)=>{
                 let count=0;
                 console.log(count);
                 for(product of products){
-                    console.log(product);
                     if(
                         calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
                         calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)>=condition.minCarRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)<=condition.maxCarRate&&
                         product.p_sugar==0
                     ){
+                        console.log("minCarRate : "+condition.minCarRate)
                         resultArr.push(product.p_id);
                         console.log(resultArr);
                         count++;
@@ -119,12 +137,14 @@ app.post('/recommend',(req,res)=>{
                 let count=0;
                 console.log(count);
                 for(product of products){
-                    console.log(product);
                     if(
                         calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
                         calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)>=condition.minCarRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)<=condition.maxCarRate&&
                         product.p_protein<15
                     ){
+                        console.log("minCarRate : "+condition.minCarRate)
                         resultArr.push(product.p_id);
                         console.log(resultArr);
                         count++;
@@ -137,11 +157,13 @@ app.post('/recommend',(req,res)=>{
                 let count=0;
                 console.log(count);
                 for(product of products){
-                    console.log(product);
                     if(
                         calRate(product.p_serving,product.p_protein)>=condition.minProRate&&
-                        calRate(product.p_serving,product.p_protein)<=condition.maxProRate
+                        calRate(product.p_serving,product.p_protein)<=condition.maxProRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)>=condition.minCarRate&&
+                        calRate(product.p_serving,product.p_corbohydrate)<=condition.maxCarRate
                     ){
+                        console.log("minCarRate : "+condition.minCarRate)
                         resultArr.push(product.p_id);
                         console.log(resultArr);
                         count++;
@@ -156,8 +178,9 @@ app.post('/recommend',(req,res)=>{
 
     function selectProduct(data){
         return new Promise((resolve,reject)=>{
+            console.log(data);
             const query=`
-                SELECT p_id,p_protein,p_corbohydrate,p_sugar FROM product
+                SELECT p_id,p_protein,p_corbohydrate,p_sugar,p_serving FROM product
             `;
             conn.query(query,(err,result)=>{
                 if(err)throw err;
@@ -221,8 +244,8 @@ app.post('/recommend',(req,res)=>{
                     break;
             }
             //res_3에 대한 처리 (몸무게)
-            minProtein=(minProtein)*(data.res_3)-72;
-            maxProtein=(maxProtein)*(data.res_3)-72;
+            minProtein=(minProtein)*(data.res_3)-60;
+            maxProtein=(maxProtein)*(data.res_3)-60;
             
             //res_4에 대한 처리 (당뇨 여부)
             if(data.res_4=='T'){
@@ -670,16 +693,35 @@ app.get('/product/:p_id',(req,res)=>{
 })
 app.post('/ingCheck',(req,res)=>{
     const nameList=req.body.nameList;
-    console.log(nameList);
-
+    
+    selectIngre(nameList).then(data=>{
+        console.log(data);
+        res.json(data);
+    }).catch(err=>console.log(err));
+    
     function selectIngre(nameList){
         return Promise.all(nameList.map(name=>{
             return new Promise((resolve,reject)=>{
                 const query=`
-                    SELECT * FROM ingredient WHERE ing_name=${name}
+                    SELECT * FROM ingredient WHERE ing_name='${name}'
                 `;
                 conn.query(query,(err,result)=>{
                     if(err) throw err;
+                    //result[0]의 값이 있으면,
+                    let data={
+                        ing_name:null,
+                        ing_type:null
+                    };
+
+                    if(result[0]){
+                        data.ing_name=result[0].ing_name,
+                        data.ing_type=result[0].ing_type    
+                    }else{
+                        data.ing_name=name,
+                        data.ing_type=null
+                    }
+
+                    resolve(data);
                 })
             })
         }))

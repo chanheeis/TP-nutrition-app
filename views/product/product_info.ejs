@@ -397,15 +397,35 @@
             const data={
                 nameList
             }
-            console.log(data);
             
             const xhttp=new XMLHttpRequest();
             const url='/ingCheck';
             xhttp.open('POST',url,true);
             xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhttp.onreadystatechange=()=>{
-                if(xhttp.onreadystatechange==4&&xhttp.status==200){
+                if(xhttp.readyState==4&&xhttp.status==200){
                     //응답 완료 시 처리할 부분
+                    var nameList=JSON.parse(xhttp.responseText);
+                    console.log(nameList[0].ing_name);
+                    var str='';
+                    for(let i=0;i<nameList.length;i++){
+                        if(i==nameList.length-1){
+                            if(nameList[i].ing_type==null){
+                                str+=`<span>${nameList[i].ing_name}</span>`;
+                            }else{
+                                str+=`<span style="color:red;">${nameList[i].ing_name}</span>`;
+                            }
+                        }else{
+                            if(nameList[i].ing_type==null){
+                                str+=`<span>${nameList[i].ing_name},</span>`;
+                            }else{
+                                str+=`<span style="color:red;">${nameList[i].ing_name},</span>`;
+                            }
+                        }
+
+                    }
+                    ing_names.innerHTML="";
+                    ing_names.innerHTML=str;
                 }
             }
             xhttp.send(JSON.stringify(data));
