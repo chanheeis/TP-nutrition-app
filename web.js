@@ -70,7 +70,7 @@ app.post('/recommend',(req,res)=>{
         .then(selectResponse).catch(err=>console.log(err))
         .then(processCondition).catch(err=>console.log(err))
         .then(selectProduct).catch(err=>console.log(err))
-        .then(filterProducts).catch(err=>console.log(err)).then(data=>console.log(data));
+        .then(filterProducts).catch(err=>console.log(err)).then(data=>res.json(data));
     
     function filterProducts(data){
         return new Promise((resolve,reject)=>{
@@ -539,7 +539,8 @@ app.get('/product',(req,res)=>{
         (SELECT COUNT(*) FROM product_like PL WHERE P.p_id=PL.p_id) AS count_like,
         (SELECT COUNT(*) FROM product_unlike PUL WHERE P.p_id=PUL.p_id) AS count_unlike,
         (SELECT COUNT(*)>0 FROM product_like PL WHERE P.p_id=PL.p_id AND PL.m_number=${req.session.memberNumber}) AS isLike,
-        (SELECT COUNT(*)>0 FROM product_unlike PUL WHERE P.p_id=PUL.p_id AND PUL.m_number=${req.session.memberNumber}) AS isUnlike
+        (SELECT COUNT(*)>0 FROM product_unlike PUL WHERE P.p_id=PUL.p_id AND PUL.m_number=${req.session.memberNumber}) AS isUnlike,
+        (SELECT COUNT(*) FROM product_cmt PC WHERE P.p_id=PC.p_id) AS count_comment
         FROM product P LIMIT ${(page-1)*20},20`;
 
         conn.query(query,(err,result)=>{
@@ -554,7 +555,8 @@ app.get('/product',(req,res)=>{
         const query=
         `SELECT P.p_id,P.p_name,P.p_image,P.p_brand,
         (SELECT COUNT(*) FROM product_like PL WHERE P.p_id=PL.p_id) AS count_like,
-        (SELECT COUNT(*) FROM product_unlike PUL WHERE P.p_id=PUL.p_id) AS count_unlike
+        (SELECT COUNT(*) FROM product_unlike PUL WHERE P.p_id=PUL.p_id) AS count_unlike,
+        (SELECT COUNT(*) FROM product_cmt PC WHERE P.p_id=PC.p_id) AS count_comment
         FROM product P LIMIT ${(page-1)*20},20`;
 
         conn.query(query,(err,result)=>{

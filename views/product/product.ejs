@@ -13,8 +13,10 @@
         <!--content&pageW 위에 div 생성-->
         <div id="content">
             <% viewData.forEach(function(data){ %>
+            
             <div id="wrapper">
                 <div id="shadow">
+                    <%= data.p_id %>
                     <a href="product/<%= data.p_id %>">
                         <div id="product">
                             <div class="product-img">
@@ -53,7 +55,7 @@
 
                     <div>
                         <a href="javascript:void(0);"><img id="sns-img-comment"src="/image/comment.png"></a>
-                        <p>4</p>
+                        <p><%= data.count_comment %></p>
                     </div>
                 </div>
             </div>

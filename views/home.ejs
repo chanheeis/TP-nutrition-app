@@ -61,7 +61,7 @@
 			margin-right:10px;
 			margin-top: 8px;
 		}
-		#question input[type=text]{
+		#question input[type=number]{
 			width:700px;
 			height:50px;
 			margin-left: 40px;
@@ -171,13 +171,103 @@
         <div id="user-input">
             <h2>앓고 계시는 신장 질환이 있으신가요?</h2>
             <div id="question-wrapper">
-                    <form id="question">    
+                    <form id="question" onsubmit="return false">    
                         <input type="radio" class="res_1" name="res_1" value="T" checked>
                         <p>네</p>
                         <input type="radio" class="res_1" name="res_1" value="F">
                         <p>아니오</p>
                     </form>
                     <button type="button" onclick="nextQuestion_radio('res_1',str_2)">응답</button>
+            </div>
+        </div>
+
+        <div id="product-wrapper">
+            <div id="shadow">
+                <a href="">
+                    <div id="product">
+                        <div class="product-img">
+                            <img src="http://drotein.co.kr/image/uploads/3.1.png">
+                        </div>
+                        <div class="product-info">
+                                <p id="brand"><span>Integrated Supplemen</span></p>
+                                <p><span>Whey Isolate Protein Snack Edition: Premium Flavor</span></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="sns">
+                <div>
+                    <a href=""><img src="good.png"></a>
+                    <p>0</p>
+                </div>
+                <div>
+                    <a href=""><img src="bad.png"></a>
+                    <p>0</p>
+                </div>
+                <div>
+                    <a href=""><img src="comment.png"></a>
+                    <p>0</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="product-wrapper">
+            <div id="shadow">
+                <a href="">
+                    <div id="product">
+                        <div class="product-img">
+                            <img src="http://drotein.co.kr/image/uploads/41.1.jpg">
+                        </div>
+                        <div class="product-info">
+                                <p id="brand"><span>Sparta Nutrition</span></p>
+                                <p><span>Whey Protein Blends</span></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="sns">
+                <div>
+                    <a href=""><img src="good.png"></a>
+                    <p>0</p>
+                </div>
+                <div>
+                    <a href=""><img src="bad.png"></a>
+                    <p>0</p>
+                </div>
+                <div>
+                    <a href=""><img src="comment.png"></a>
+                    <p>0</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="product-wrapper">
+            <div id="shadow">
+                <a href="">
+                    <div id="product">
+                        <div class="product-img">
+                            <img src="http://drotein.co.kr/image/uploads/11.jpg">
+                        </div>
+                        <div class="product-info">
+                                <p id="brand"><span>TRANSPARENT LABS</span></p>
+                                <p><span>100% GRASS-FED WHEY PROTEIN ISOLATE</span></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="sns">
+                <div>
+                    <a href=""><img src="good.png"></a>
+                    <p>0</p>
+                </div>
+                <div>
+                    <a href=""><img src="bad.png"></a>
+                    <p>0</p>
+                </div>
+                <div>
+                    <a href=""><img src="comment.png"></a>
+                    <p>0</p>
+                </div>
             </div>
         </div>
     </div>
@@ -188,36 +278,44 @@
             <div>
                 <h2>보충제 섭취의 목적이 어떻게 되시나요?</h2>
                 <div id="question-wrapper">
-                    <form id="question>
+                    <form id="question" onsubmit="return false">
                         <input type="radio" class="res_2" name="res_2" value="체중감량" checked>
+                        <p>체중감량</p>
                         <input type="radio" class="res_2" name="res_2" value="근육증가">
+                        <p>근육증가</p>
                         <input type="radio" class="res_2" name="res_2" value="일반적인 운동">
+                        <p>일반적인 운동 목적</p>
                     </form>
+                    <button type="button" onclick="nextQuestion_radio('res_2',str_3)">응답</button>
                 </div>
-                <button type="button" onclick="nextQuestion_radio('res_2',str_3)">응답</button>
             </div>
         `;
 
         const str_3=`
             <div>
-                <div>
-                    <p>귀하의 몸무게는 어떻게 되십니까?</p>
-                    소수점 한자리까지 적어주세요. <input type="number" id="res_3" name="res_3">
+                <h2>귀하의 몸무게를 소수점 한자리까지 입력해주세요</h2>
+                <div id="question-wrapper">
+                    <form id="question" onsubmit="return false">
+                        <input type="number" id="res_3" name="res_3">
+                    </form>
+                    <button type="button" onclick="nextQuestion('res_3',str_4)">응답</button>
                 </div>
-                <button type="button" onclick="nextQuestion('res_3',str_4)">응답</button>
-            </div>    
+            </div>
+ 
         `;
 
         const str_4=`
             <div>
-                <div>
-                    <form>
-                        <p>당뇨 질환을 앓고 계십니까?</p>
-                        Yes<input type="radio" class="res_4" name="res_4" value="T" checked>
-                        No<input type="radio" class="res_4" name="res_4" value="F">
+                <h2>당뇨 질환을 앓고 계십니까?</h2>
+                <div id="question-wrapper">
+                    <form id="question" onsubmit="return false">    
+                        <input type="radio" class="res_4" name="res_4" value="T" checked>
+                        <p>네</p>
+                        <input type="radio" class="res_4" name="res_4" value="F">
+                        <p>아니오</p>
                     </form>
+                    <button type="button" onclick="lastQuestion('res_4',str_5)">응답</button>
                 </div>
-                <button type="button" onclick="lastQuestion('res_4',str_5)">응답</button>
             </div>
         `
         
@@ -231,9 +329,9 @@
 
         //Radio 버튼인 곳에 적용할 로직
         function nextQuestion_radio(resNum,htmlString){
-            const questionWrapper=document.getElementById("question-wrapper");
+            const questionWrapper=document.getElementById("user-input");
             let resValue=null;
-
+            
             const eleList=document.getElementsByClassName(resNum);
             
             for(ele of eleList){
@@ -242,15 +340,17 @@
                     break;
                 }
             }
-            
             resQueue.push(resValue);
-
-            questionWrapper.removeChild(questionWrapper.children[0]);
+            let len=questionWrapper.childNodes.length;
+            
+            for(let i=0;i<len;i++){
+                questionWrapper.removeChild(questionWrapper.childNodes[0]);
+            }
             questionWrapper.appendChild(createElementFromHTML(htmlString));
         }
 
         function nextQuestion(resNum,htmlString){
-            const questionWrapper=document.getElementById("question-wrapper");
+            const questionWrapper=document.getElementById("user-input");
             const resValue=document.getElementById(resNum).value;
             resQueue.push(resValue);
 
@@ -259,8 +359,7 @@
         }
 
         function lastQuestion(resNum,htmlString){
-            const questionWrapper=document.getElementById("question-wrapper");
-            const questionInfo=document.getElementById("question-info");
+            const questionWrapper=document.getElementById("user-input");
             let resValue=null;
 
             const eleList=document.getElementsByClassName(resNum);
@@ -271,21 +370,25 @@
                     break;
                 }
             }
-
             resQueue.push(resValue); 
             console.log(`Last Response Queue : ${resQueue}`);
 
             questionWrapper.remove();
-            questionInfo.innerHTML=htmlString;
-
             //처리중입니다 => 귀하에게 적합한 제품은 다음과 같습니다. (AJAX요청 완료 시)
             const xhttp=new XMLHttpRequest();
             const url='/recommend';
             xhttp.open('POST',url,true);
             xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             xhttp.onreadystatechange=()=>{
+                //JSON응답을 배열로 받아, 응답의 갯수만큼 IMG태그를 만들어 노출시키는 로직 설계하기
                 if(xhttp.readyState==4&&xhttp.status==200){
-                    questionInfo.innerHTML="귀하에게 적합한 제품은 다음과 같습니다.";
+                    if(xhttp.responseText===null){
+                        console.log(xhttp.responseText);
+                        console.log("응답이 비어있습니다!");
+                    }else{
+                        console.log(xhttp.responseText);
+                        console.log("응답이 있습니다!");
+                    }
                 }
             }
 
@@ -295,6 +398,7 @@
                 res_3:resQueue[2],
                 res_4:resQueue[3]       
             };
+
             xhttp.send(JSON.stringify(data));
         }
     </script>
