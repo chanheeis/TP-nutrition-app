@@ -194,43 +194,46 @@ app.post('/recommend',(req,res)=>{
             switch (data.res_2){
                 case '체중감량' :
                     isDiabetes=true;
-                    minProtein=0.8;
+                    minProtein=0;
                     maxProtein=1.2;
-                    maxCarRate=35;
-                    minCarRate=25;
-                    maxProRate=45;
-                    minProRate=35;
+                    maxCarRate=40;
+                    minCarRate=20;
+                    maxProRate=50;
+                    minProRate=30;
                     break;
                 case '일반적인 운동' :
                     minProtein=1.2;
                     maxProtein=1.6;
-                    maxCarRate=55;
-                    minCarRate=45;
-                    maxProRate=35;
-                    minProRate=25;
+                    maxCarRate=60;
+                    minCarRate=40;
+                    maxProRate=40;
+                    minProRate=20;
                     break;
                 case '근육증가' :
                     minProtein=1.6;
-                    maxProtein=2.5;
-                    minCarRate=35;
-                    maxCarRate=45;
-                    maxProRate=55;
-                    minProRate=45;
+                    maxProtein=3;
+                    minCarRate=30;
+                    maxCarRate=50;
+                    maxProRate=60;
+                    minProRate=40;
                     break;
                 default :
                     break;
             }
             //res_3에 대한 처리 (몸무게)
-            minProtein=(minProtein)*(data.res_3)-80;
-            maxProtein=(maxProtein)*(data.res_3)-80;
+            minProtein=(minProtein)*(data.res_3)-72;
+            maxProtein=(maxProtein)*(data.res_3)-72;
+            
             //res_4에 대한 처리 (당뇨 여부)
             if(data.res_4=='T'){
                 isDiabetes=true;
             }
+            
             console.log(`귀하의 분석 결과 : `)
             if(isKidneyDisorder){
                 console.log(`프로틴 제한 : ${minProteinLimit}~${maxProteinLimit}`);
             }
+
             console.log(`프로틴 권장 섭취량 : ${minProtein}~${maxProtein}`);
             console.log(`탄수화물 권장 비율 : ${minCarRate}%~${maxCarRate}%`);
             console.log(`단백질 권장 비율 : ${minProRate}%~${maxProRate}%`);
@@ -242,7 +245,6 @@ app.post('/recommend',(req,res)=>{
                 minProRate,maxProRate,
                 isDiabetes,isKidneyDisorder
             };
-
             resolve(passData);
         })
     }
@@ -708,7 +710,6 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
         const p_calorie=req.body.p_calorie;
         const p_name=req.body.p_name;
         const p_brand=req.body.p_brand;
-        const p_desc=req.body.p_desc;
         const p_weight=req.body.p_weight;
         const p_flavor=req.body.p_flavor;
         const p_fat=req.body.p_fat;
@@ -723,7 +724,7 @@ app.post('/product/:p_id/edit',upload.single('p_image'),(req,res)=>{
     
         const query=`UPDATE product SET ? WHERE p_id=${p_id}`;
         let data={
-            p_name,p_brand,p_desc,
+            p_name,p_brand,
             p_weight,p_flavor,p_fat,
             p_saturated_fat,p_trans_fat,p_cholesterol,
             p_sodium,p_corbohydrate,p_dietary_fiber,

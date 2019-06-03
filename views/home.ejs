@@ -5,21 +5,179 @@
     <meta id="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home</title>
+    <style>
+        /*imgs*/
+		#main-img{
+			width: 1100px;
+			height: 600px;
+            margin:0px auto;
+			margin-bottom: 50px;
+			background-color: gray;
+		}
+
+/*user input*/
+		#user-input{
+			border-radius: 15px 15px 15px 15px;
+			width: 1100px;
+			margin: 0px auto;
+			margin-bottom: 50px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+			word-break: break-word;
+			text-align: left;
+		}
+
+		#user-input h2{
+			width: 1000px;
+			border-bottom: 3px solid #4285f4;
+			padding-top: 20px;
+			margin: 0px auto;
+		}
+
+		#question-wrapper{
+			width: 950px;
+			height: 150px;
+			padding-top: 50px;
+			margin:  0px auto;
+			font-size: 20px;
+			text-align: center;
+		}
+
+/*input*/
+		#question{
+			width: 820px;
+			height:50px;
+			float: left;
+		}
+		#question input{
+			float: left;
+		}
+		#question p{
+			float: left;
+		}
+		#question input[type=radio]{
+			width:15px;
+			height:15px;
+			margin-left: 40px;
+			margin-right:10px;
+			margin-top: 8px;
+		}
+		#question input[type=text]{
+			width:700px;
+			height:50px;
+			margin-left: 40px;
+			font-size: 20px;
+			background-color: white;
+			border: 2px solid #cccccc;
+			border-radius: 7px 7px 7px 7px ;
+			text-align:center;
+		}
+
+/*next*/
+		#question-wrapper button{
+			width:110px;
+			height:50px;
+			float: left;
+			color: white;
+			font-size: 20px;
+			background-color: #4285f4;
+			border: none;
+			border-radius: 7px 7px 7px 7px ;
+		}
+
+/*product*/
+
+		#product-wrapper{
+            width: 290px;
+            margin: 0px 55px;
+			margin-bottom: 50px;
+            float:left;
+            border-radius: 10px 10px 10px 10px;
+		}
+		#shadow{
+			margin-bottom: 10px;
+		}
+		#shadow :hover{
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        #product{
+            width: 290px;
+            padding: 20px 25px;
+            color: #555555
+        }
+        #product :hover{
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0.3);
+        }
+        #product :active{
+            color: #555555;
+            text-decoration: none;
+        }
+        #product :visited{
+            color: #555555;
+            text-decoration: none;
+        }
+        .product-img{
+            padding-top: 10px;
+            width: 240px;
+            text-align: center;
+            background-color: white;
+        }
+        .product-img img{
+            height: 200px;
+        }
+        .product-info{
+            width: 210px;
+            height: 100px;
+			margin: 0px 15px;
+            padding: 10px 0px;
+			text-decoration: none;
+        }
+        .product-info p{
+            width: 220px;
+            text-align: left;
+			font-size: 14px;
+        }
+		#brand{
+			margin-bottom: 5px;
+			color:  #4285f4;
+		}
+
+/*sns*/
+        #sns {
+            height: 50px;
+            padding: 10px 15px;
+            background-color: white;
+        }
+
+        #sns div{
+            width: 60px;
+            float:left; 
+            padding-right: 8px;
+        }
+
+        #sns div img{
+            height: 20px;
+            float:left; 
+            padding-right: 5px;
+
+        }
+
+    </style>
 </head>
 <body onload="initial()">
     <% include ./templates/header %>
     <div id="content">
-        <p id="question-info" style="color:red">(사용자)님에게 적합한 보충제를 찾기 위한 질문이 4개 준비되어 있습니다.</p>
-        <div id="question-wrapper">
-            <div>
-                <form>
-                    <p>앓고 계시는 신장 질환이 있으신가요?</p>
-                    <div>
-                        Yes<input type="radio" class="res_1" name="res_1" value="T" checked>
-                        No<input type="radio" class="res_1" name="res_1" value="F">
-                    </div>
-                </form>
-                <button type="button" onclick="nextQuestion_radio('res_1',str_2)">응답</button>
+        <div id="main-img"></div>
+        <!--<p id="question-info" style="color:red">(사용자)님에게 적합한 보충제를 찾기 위한 질문이 4개 준비되어 있습니다.</p>-->
+        <div id="user-input">
+            <h2>앓고 계시는 신장 질환이 있으신가요?</h2>
+            <div id="question-wrapper">
+                    <form id="question">    
+                        <input type="radio" class="res_1" name="res_1" value="T" checked>
+                        <p>네</p>
+                        <input type="radio" class="res_1" name="res_1" value="F">
+                        <p>아니오</p>
+                    </form>
+                    <button type="button" onclick="nextQuestion_radio('res_1',str_2)">응답</button>
             </div>
         </div>
     </div>
@@ -28,12 +186,12 @@
         const resQueue=[];
         const str_2=`
             <div>
-                <p>보충제 섭취의 목적이 어떻게 되시나요?</p>
-                <div>
-                    <form>
-                        체중감량<input type="radio" class="res_2" name="res_2" value="체중감량" checked>
-                        근육증가<input type="radio" class="res_2" name="res_2" value="근육증가">
-                        일반적인 운동<input type="radio" class="res_2" name="res_2" value="일반적인 운동">
+                <h2>보충제 섭취의 목적이 어떻게 되시나요?</h2>
+                <div id="question-wrapper">
+                    <form id="question>
+                        <input type="radio" class="res_2" name="res_2" value="체중감량" checked>
+                        <input type="radio" class="res_2" name="res_2" value="근육증가">
+                        <input type="radio" class="res_2" name="res_2" value="일반적인 운동">
                     </form>
                 </div>
                 <button type="button" onclick="nextQuestion_radio('res_2',str_3)">응답</button>
