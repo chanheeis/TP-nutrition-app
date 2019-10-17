@@ -24,7 +24,7 @@ const upload=multer({storage:storage});
 const conn=mysql.createConnection({
     host:'nodejs-004.cafe24.com',
     user:'chanheeis',
-    password:'chanheeis12@',
+    password:'A1318dkfk!@',
     database:'chanheeis'
 });
 
@@ -104,11 +104,8 @@ app.post('/recommend',(req,res)=>{
                         product.p_sugar==0&&
                         product.p_protein<15
                     ){
-                        console.log("minCarRate : "+condition.minCarRate);
                         resultArr.push(product.p_id);
-                        console.log(resultArr);
                         count++;
-                        console.log(count);
                         if(count==3) break;
                     }
                 }
