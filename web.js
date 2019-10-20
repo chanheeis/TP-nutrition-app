@@ -5,7 +5,6 @@ const bodyParser=require('body-parser');
 const mysql=require('mysql');
 const multer=require('multer');
 const root=require('./routes/root');
-const XMLHttpRequest=require('xmlhttprequest').XMLHttpRequest;
 const session=require('express-session');
 
 //파일 시스템 설정
@@ -60,12 +59,10 @@ app.get('/',(req,res)=>{
 
 //제품을 추천하는 JSON 응답의 AJAX요청 수행
 app.post('/recommend',(req,res)=>{
-
     const res_1=req.body.res_1;
     const res_2=req.body.res_2;
     const res_3=req.body.res_3;
     const res_4=req.body.res_4;
-
     insertResponse(res_1,res_2,res_3,res_4).catch(err=>console.log(err))
         .then(selectResponse).catch(err=>console.log(err))
         .then(processCondition).catch(err=>console.log(err))
@@ -85,7 +82,122 @@ app.post('/recommend',(req,res)=>{
                 }))
             }
         ).then(data=>res.json(data));
+
+    function insertResponse(res_1,res_2,res_3,res_4){
+        return new Promise((resolve,reject)=>{
+            const query="INSERT INTO response SET ?";
+            
+            let res_user="unknown";
+            if(req.session.memberNumber){
+                res_user=req.session.memberNumber
+            };
+
+            const queryData={
+                res_1,res_2,res_3,res_4,res_user
+            };
+            conn.query(query,queryData,(err,result)=>{
+                if(err) throw err;
+                resolve(result.insertId);
+            })
+        })
+    }
     
+    function selectProduct(data){
+        return new Promise((resolve,reject)=>{
+            const query=`
+                SELECT p_id,p_protein,p_corbohydrate,p_sugar,p_serving FROM product
+            `;
+            conn.query(query,(err,result)=>{
+                if(err)throw err;
+                const passData={
+                    condition:data,
+                    products:result
+                }
+                resolve(passData);
+            })
+            
+        })
+    }
+
+    function processCondition(data){
+        return new Promise((resolve,reject)=>{    
+            let minProteinLimit=null;
+            let maxProteinLimit=null;
+            let minProtein=null;
+            let maxProtein=null;
+            let minCarRate=null;
+            let maxCarRate=null;
+            let minProRate=null;
+            let maxProRate=null;
+            let isDiabetes=false;
+            let isKidneyDisorder=false;
+
+            //res_1에 대한 처리 (신장 장애 여부)
+            if(data.res_1=='T'){
+                isKidneyDisorder=true;
+                minProteinLimit=10;
+                maxProteinLimit=15;
+            }
+            //res_2에 대한 처리 (보충제 섭취의 목적)
+            switch (data.res_2){
+                case '체중감량' :
+                    isDiabetes=true;
+                    minProtein=0;
+                    maxProtein=1.2;
+                    maxCarRate=40;
+                    minCarRate=20;
+                    maxProRate=50;
+                    minProRate=30;
+                    break;
+                case '일반적인 운동' :
+                    minProtein=1.2;
+                    maxProtein=1.6;
+                    maxCarRate=60;
+                    minCarRate=40;
+                    maxProRate=40;
+                    minProRate=20;
+                    break;
+                case '근육증가' :
+                    minProtein=1.6;
+                    maxProtein=3;
+                    minCarRate=30;
+                    maxCarRate=50;
+                    maxProRate=60;
+                    minProRate=40;
+                    break;
+                default :
+                    break;
+            }
+            //res_3에 대한 처리 (몸무게)
+            minProtein=(minProtein)*(data.res_3)-60;
+            maxProtein=(maxProtein)*(data.res_3)-60;
+            
+            //res_4에 대한 처리 (당뇨 여부)
+            if(data.res_4=='T'){
+                isDiabetes=true;
+            }
+
+            const passData={
+                minProteinLimit,maxProteinLimit,
+                minProtein,maxProtein,
+                minCarRate,maxCarRate,
+                minProRate,maxProRate,
+                isDiabetes,isKidneyDisorder
+            };
+            resolve(passData);
+        })
+    }
+
+    function selectResponse(insertId){
+        return new Promise((resolve,reject)=>{
+            const query=`SELECT res_1,res_2,res_3,res_4 FROM response WHERE res_id=${insertId}`;
+            conn.query(query,(err,result)=>{
+                if(err) throw err;
+                resolve(result[0]);
+            })
+        })
+    }
+
     function filterProducts(data){
         return new Promise((resolve,reject)=>{
             const condition=data.condition;
@@ -170,131 +282,6 @@ app.post('/recommend',(req,res)=>{
                 }
                 resolve(resultArr);
             }
-        })
-    }
-
-    function selectProduct(data){
-        return new Promise((resolve,reject)=>{
-            console.log(data);
-            const query=`
-                SELECT p_id,p_protein,p_corbohydrate,p_sugar,p_serving FROM product
-            `;
-            conn.query(query,(err,result)=>{
-                if(err)throw err;
-                const passData={
-                    condition:data,
-                    products:result
-                }
-                resolve(passData);
-            })
-            
-        })
-    }
-
-    function processCondition(data){
-        return new Promise((resolve,reject)=>{    
-            let minProteinLimit=null;
-            let maxProteinLimit=null;
-            let minProtein=null;
-            let maxProtein=null;
-            let minCarRate=null;
-            let maxCarRate=null;
-            let minProRate=null;
-            let maxProRate=null;
-            let isDiabetes=false;
-            let isKidneyDisorder=false;
-
-            //res_1에 대한 처리 (신장 장애 여부)
-            if(data.res_1=='T'){
-                isKidneyDisorder=true;
-                minProteinLimit=10;
-                maxProteinLimit=15;
-            }
-            //res_2에 대한 처리 (보충제 섭취의 목적)
-            switch (data.res_2){
-                case '체중감량' :
-                    isDiabetes=true;
-                    minProtein=0;
-                    maxProtein=1.2;
-                    maxCarRate=40;
-                    minCarRate=20;
-                    maxProRate=50;
-                    minProRate=30;
-                    break;
-                case '일반적인 운동' :
-                    minProtein=1.2;
-                    maxProtein=1.6;
-                    maxCarRate=60;
-                    minCarRate=40;
-                    maxProRate=40;
-                    minProRate=20;
-                    break;
-                case '근육증가' :
-                    minProtein=1.6;
-                    maxProtein=3;
-                    minCarRate=30;
-                    maxCarRate=50;
-                    maxProRate=60;
-                    minProRate=40;
-                    break;
-                default :
-                    break;
-            }
-            //res_3에 대한 처리 (몸무게)
-            minProtein=(minProtein)*(data.res_3)-60;
-            maxProtein=(maxProtein)*(data.res_3)-60;
-            
-            //res_4에 대한 처리 (당뇨 여부)
-            if(data.res_4=='T'){
-                isDiabetes=true;
-            }
-            
-            console.log(`귀하의 분석 결과 : `)
-            if(isKidneyDisorder){
-                console.log(`프로틴 제한 : ${minProteinLimit}~${maxProteinLimit}`);
-            }
-
-            console.log(`프로틴 권장 섭취량 : ${minProtein}~${maxProtein}`);
-            console.log(`탄수화물 권장 비율 : ${minCarRate}%~${maxCarRate}%`);
-            console.log(`단백질 권장 비율 : ${minProRate}%~${maxProRate}%`);
-
-            const passData={
-                minProteinLimit,maxProteinLimit,
-                minProtein,maxProtein,
-                minCarRate,maxCarRate,
-                minProRate,maxProRate,
-                isDiabetes,isKidneyDisorder
-            };
-            resolve(passData);
-        })
-    }
-
-    function insertResponse(res_1,res_2,res_3,res_4){
-        return new Promise((resolve,reject)=>{
-            const query="INSERT INTO response SET ?";
-            
-            let res_user="unknown";
-            if(req.session.memberNumber){
-                res_user=req.session.memberNumber
-            };
-
-            const queryData={
-                res_1,res_2,res_3,res_4,res_user
-            };
-            conn.query(query,queryData,(err,result)=>{
-                if(err) throw err;
-                resolve(result.insertId);
-            })
-        })
-    }
-
-    function selectResponse(insertId){
-        return new Promise((resolve,reject)=>{
-            const query=`SELECT res_1,res_2,res_3,res_4 FROM response WHERE res_id=${insertId}`;
-            conn.query(query,(err,result)=>{
-                if(err) throw err;
-                resolve(result[0]);
-            })
         })
     }
 
