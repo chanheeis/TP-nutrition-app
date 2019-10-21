@@ -99,15 +99,12 @@
     <% include ./templates/header %>
     <div id="content">
         <div>
-            <!--다른 페이지의 h2태그와의 차별을 위해, join-title이라는 id값을 부여-->
             <h2>Sign up</h2>
-            <!--기존에 form에 부여되지 않던 id를 join-form으로 생성-->
             <form
                 id="join-form" 
                 action="/join" 
                 method="post" 
                 onsubmit="return submitCheck()">
-                
                 <div>
                     <span>Name</span> 
                     <input 
@@ -117,7 +114,6 @@
                         size="20"
                         required>
                 </div>
-
                 <div>
                     <span>ID</span><span id="m_id_result">ID 확인 결과</span> 
                     <input 

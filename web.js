@@ -43,13 +43,10 @@ app.use(session({
 }))
 
 app.listen(8001,()=>{
-    console.log("Connected to 3000 PORT!!!");
-    console.log(`This App's Root is ${root}.`);
     conn.connect();
 })
 
 app.get('/',(req,res)=>{
-    //View에 렌더하기 위해 넘겨줄 변수들을 정의하고 있음
     const loginInfo={
         loginStatus:req.session.loginStatus,
         userName:req.session.userName
@@ -57,12 +54,8 @@ app.get('/',(req,res)=>{
     res.render('home',{loginInfo:loginInfo});
 })
 
-//제품을 추천하는 JSON 응답의 AJAX요청 수행
 app.post('/recommend',(req,res)=>{
-    const res_1=req.body.res_1;
-    const res_2=req.body.res_2;
-    const res_3=req.body.res_3;
-    const res_4=req.body.res_4;
+    const {res_1,res_2,res_3,res_4}=req.body;
     insertResponse(res_1,res_2,res_3,res_4).catch(err=>console.log(err))
         .then(selectResponse).catch(err=>console.log(err))
         .then(processCondition).catch(err=>console.log(err))
@@ -115,7 +108,6 @@ app.post('/recommend',(req,res)=>{
                 }
                 resolve(passData);
             })
-            
         })
     }
 
@@ -357,7 +349,6 @@ app.post('/login/check',(req,res)=>{
             req.session.userName=results[0].m_name;
             req.session.loginStatus=true;
             req.session.memberNumber=results[0].m_number;
-
             if(results[0].m_number<100){
                 req.session.isAdmin=true;
             }else{
@@ -1146,119 +1137,3 @@ app.get('/product/upload/ingredient',(req,res)=>{
         })
     }
 })
-
-/*app.get('/add',(req,res)=>{
-    const arr=[55,67,69,79,86,87,95];
-    const ingList=['organic Sugar Cane','natural Lemon and Lime flavors','Citric Acid','Silicon Dioxide','Malic Acid','Fruit juice (color)','Stevia (leaf) extract (Stevia) (leaf)'];
-    mapArray(arr,ingList).then(data=>{
-        console.log(data);
-        res.send("Complete!");
-    })
-    function mapArray(arr,ingList){
-        return Promise.all(arr.map(item=>{
-            return Promise.all(ingList.map(ing=>{
-                return new Promise((resolve,reject)=>{
-                    const query=`
-                        INSERT INTO product_ingredient SET ?
-                    `;
-                    const queryData={
-                        p_id:item,
-                        ing_name:ing
-                    };
-                    conn.query(query,queryData,(err,result)=>{
-                        if(err) throw err;
-                        console.log(result);
-
-                        resolve(result);
-                    })
-                })
-            }))
-        }))
-    }
-})*/
-
-//해당 상품의 가격대를 탐색하기 위하여 네이버에서 제공하는 쇼핑 검색 API를 호출하는 부분
-/*
-app.get('/test', function (req, res) {
-    getDataFromDB().then(queryStringfy).catch(err=>console.log(err))
-    .then(data=>{
-        return Promise.all(data.map((value)=>{
-            return new Promise((resolve,reject)=>{
-                //각 value의 query로 API호출을 하여, readyState와 status가 만족되면, 해당 가격들을 리스트화하여 resolve 
-                const client_id="rfsNNjH2NfhNhhTNnPfk";
-                const client_secret="uPeOXOPI_k";
-                const url = `https://openapi.naver.com/v1/search/shop.json?query=${value.query}&sort=sim&display=1`;    
-                const xhttp=new XMLHttpRequest();
-
-                //URL(혹은 URI)를 UTF-8 인코딩하는 메서드, encodeURL를 통해 전달해야 공백, 한글로 구성된 URL을 전달해도 문제가 없음
-                xhttp.open('GET',encodeURI(url),true);
-
-                xhttp.setRequestHeader("X-Naver-Client-Id",client_id);
-                xhttp.setRequestHeader("X-Naver-Client-Secret",client_secret);
-            
-                //해당 AJAX의 결과가 null일 때 수행할 예외처리를 정의해야 함
-                xhttp.onreadystatechange=()=>{
-                    if(xhttp.readyState==4 && xhttp.status==200){
-                        const response=JSON.parse(xhttp.responseText);
-                        resolve(response);
-                        if(response.items.length==0){
-                            value.lpriceList=["null"];
-                            resolve(value);
-                        }else{  
-                            console.log(response.items);
-                            response.items.forEach((item,index,arr)=>{
-                                if(index==0){
-                                    value.lpriceList=[item.lprice];
-                                }else{
-                                    value.lpriceList.push(item.lprice);
-                                }
-                            })
-                            resolve(value);
-                        }
-                    }else{
-                        console.log(`ReadyState is ${xhttp.readyState}`);
-                        console.log(`Status is ${xhttp.status}`);
-                    }
-                } 
-                xhttp.send();
-            })
-        }));
-    })
-    .then((data)=>{
-        console.log(data[4].items);
-    })
-
-    function getDataFromDB (){
-        return new Promise((resolve,reject)=>{
-            const query=`SELECT p_id,p_brand,p_name,p_flavor,p_weight FROM product LIMIT 10`; 
-            conn.query(query,(err,result)=>{
-                if(err){
-                    reject("Error Occured During selecting from Database");
-                };
-                if(result.length==0){
-                    reject("Query Result is NULL!!");
-                }
-                resolve(result)
-            })       
-        })
-    } 
-
-    //Query결과가 있을 때만 실행됨, 해당 Promise에서 id와 query값을 가지는 객체를 배열의 갯수만큼 생성함
-    function queryStringfy(data){
-        return new Promise((resolve,reject)=>{
-            if(data!=null){
-                data.forEach((item,index,arr)=>{
-                    let brand=item.p_brand;
-                    let name=item.p_name;
-                    let flavor=item.p_flavor;
-                    let weight=item.p_weight.toString();
-
-                    arr[index].query=`${brand} ${name} ${flavor} ${weight}`;
-                })
-                resolve(data);
-            }else{
-                reject("Data is NULL!!");
-            }
-        })
-    }
-})*/

@@ -28,7 +28,7 @@ session에 대한 기본 설정
 product테이블에 저장 돼 있는 모든 보충제 제품을 가져옴, 이 부분은 추후 효율적인 Query 작성을 통해 최적화 해야 하는 부분
 
 ### line:121
-사용자의 신체 정보에 따라 단백질 섭취 한계(minProteinLimit, maxProteinLimit),최소~최대로 필요한 단백질의 양(minProtein,maxProtein), 최소~최대로 필요한 탄수화물의 비율(minCarRate,maxCarRate), 설탕 첨가 여부(isDiabetes), 신장 질환 여부(isKidneyDisorder)를 계산함
+사용자의 신체 정보에 따라 단백질 섭취 한계(minProteinLimit, maxProteinLimit),최소-최대로 필요한 단백질의 양(minProtein,maxProtein), 최소-최대로 필요한 탄수화물의 비율(minCarRate,maxCarRate), 설탕 첨가 여부(isDiabetes), 신장 질환 여부(isKidneyDisorder)를 계산함
 
 ### line:141
 보충제 섭취 목적에 따라 위에서 설정한 변수 값을 설정
